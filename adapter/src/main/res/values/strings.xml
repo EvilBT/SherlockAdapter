@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Adapter</string>
+    <string name="loading">正在加载</string>
+    <string name="load_failed">加载失败，点击重新加载</string>
+</resources>

@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="xyz.zpayh.myadapter.MainActivity">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_add"
+        android:orderInCategory="100"
+        android:title="@string/action_add"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_completed"
+        android:orderInCategory="100"
+        android:title="@string/action_completed"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_failed"
+        android:orderInCategory="100"
+        android:title="@string/action_failed"
+        app:showAsAction="never"/>
+</menu>

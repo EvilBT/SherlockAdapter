@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">SherlockAdapter</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add">添加数据</string>
+    <string name="action_completed">完成加载</string>
+    <string name="action_failed">加载失败</string>
+
+    <string-array name="list">
+        <item>Android</item>
+        <item>iOS</item>
+        <item>Java</item>
+        <item>JavaScript</item>
+        <item>Python</item>
+        <item>C</item>
+        <item>C++</item>
+        <item>Ruby</item>
+        <item>AngularJs</item>
+        <item>ReactJs</item>
+        <item>Html5</item>
+        <item>TensorFlow</item>
+        <item>Swift</item>
+    </string-array>
+</resources>
