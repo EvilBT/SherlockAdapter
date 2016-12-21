@@ -3,9 +3,9 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="xyz.zpayh.myadapter.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_empty"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_empty"
         app:showAsAction="never"/>
 
     <item

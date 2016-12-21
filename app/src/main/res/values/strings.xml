@@ -5,6 +5,7 @@
     <string name="action_completed">完成加载</string>
     <string name="action_failed">加载失败</string>
     <string name="action_close">关闭加载</string>
+    <string name="action_empty">空数据</string>
 
     <string-array name="list">
         <item>Android</item>

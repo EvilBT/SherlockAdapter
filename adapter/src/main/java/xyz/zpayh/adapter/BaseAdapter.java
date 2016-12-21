@@ -148,6 +148,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public void onBindViewHolder(BaseViewHolder holder, int position) {
+        if (mData.isEmpty() && position == 0){
+            convertEmpty(holder);
+            return;
+        }
 
         int index = position;
         if (index < getHeadSize()){
@@ -180,12 +184,19 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public int getItemCount() {
+        if (mData.isEmpty()){
+            return 1;
+        }
         final int loadMoreCount = canAutoLoadMore()?1:0;
         return getHeadSize() + mData.size() + getFootSize()+loadMoreCount;
     }
 
     @Override
     public int getItemViewType(int position) {
+        if (mData.isEmpty()){
+            return mEmptyLayout;
+        }
+
         int index = position;
         if (index < getHeadSize()){
             return mHeadLayouts[index];
@@ -266,6 +277,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
     }
 
+    public void convertEmpty(BaseViewHolder holder){
+
+    }
+
     private void bindLoadMore(BaseViewHolder holder){
         holder.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -277,6 +292,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
                 }
             }
         });
+    }
+
+    @LayoutRes
+    private int mEmptyLayout = R.layout.default_empty;
+
+    public void setEmptyLayout(@LayoutRes int emptyLayout){
+        mEmptyLayout = emptyLayout;
     }
 
     //======================= LoadMore ==========================
