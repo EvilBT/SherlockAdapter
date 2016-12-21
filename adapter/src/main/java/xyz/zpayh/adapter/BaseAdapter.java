@@ -250,15 +250,18 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             holder.setVisibility(R.id.progressBar, View.VISIBLE)
                     .setVisibility(R.id.load_tips, View.VISIBLE)
                     .setVisibility(R.id.load_completed, View.GONE)
+                    .setVisibility(R.id.iv_load_tips, View.GONE)
                     .setText(R.id.load_tips,R.string.loading);
         }else if (loadState == LOAD_FAILED) {
             holder.setVisibility(R.id.progressBar, View.GONE)
                     .setVisibility(R.id.load_tips, View.VISIBLE)
                     .setVisibility(R.id.load_completed, View.GONE)
+                    .setVisibility(R.id.iv_load_tips, View.VISIBLE)
                     .setText(R.id.load_tips, R.string.load_failed);
         }else if (loadState == LOAD_COMPLETED){
             holder.setVisibility(R.id.progressBar, View.GONE)
                     .setVisibility(R.id.load_tips, View.GONE)
+                    .setVisibility(R.id.iv_load_tips, View.GONE)
                     .setVisibility(R.id.load_completed, View.VISIBLE);
         }
     }

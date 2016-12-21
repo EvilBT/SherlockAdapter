@@ -6,25 +6,54 @@
     android:layout_height="40dp">
 
     <ProgressBar
+        android:visibility="gone"
         style="?android:attr/progressBarStyle"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:id="@+id/progressBar"
         android:indeterminate="true" />
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/iv_load_tips"
+        android:src="@drawable/base_load_failed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description"/>
     <TextView
+        android:visibility="gone"
         android:id="@+id/load_tips"
         android:text="@string/loading"
         android:layout_margin="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <View
-        android:visibility="gone"
+    <LinearLayout
         android:id="@+id/load_completed"
-        android:background="@color/base_divider_color"
+        android:gravity="center"
         android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginEnd="32dp"
         android:layout_width="match_parent"
-        android:layout_height="2dp"/>
+        android:layout_height="wrap_content">
+        <View
+            android:background="@color/base_divider_color"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_weight="1"/>
+        <ImageView
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/no_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/content_description"/>
+        <View
+            android:background="@color/base_divider_color"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
 </LinearLayout>

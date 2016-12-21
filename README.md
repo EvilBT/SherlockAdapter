@@ -1,1 +1,1 @@
-"# SherlockAdapter" 
+# SherlockAdapter
