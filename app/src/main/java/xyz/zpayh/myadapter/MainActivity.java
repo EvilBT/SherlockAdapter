@@ -5,8 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -50,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
         });
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(4,1));
         mMyAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mMyAdapter);
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mMyAdapter.addHeadLayout(android.R.layout.simple_list_item_1);
         mMyAdapter.addFootLayout(android.R.layout.simple_list_item_1);
 
-        mMyAdapter.openAutoLoadMore();
+        mMyAdapter.openAutoLoadMore(true);
         mMyAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
@@ -120,17 +122,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_add){
+            mMyAdapter.openAutoLoadMore(true);
             mLoadState = 0;
             return true;
         }
 
         if (id == R.id.action_completed){
+            mMyAdapter.openAutoLoadMore(true);
             mLoadState = 1;
             return true;
         }
 
         if (id == R.id.action_failed){
+            mMyAdapter.openAutoLoadMore(true);
             mLoadState = 2;
+            return true;
+        }
+
+        if (id == R.id.action_close){
+            mMyAdapter.openAutoLoadMore(false);
             return true;
         }
 

@@ -1,6 +1,7 @@
 package xyz.zpayh.adapter;
 
 import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/12/19.
+ * Created by 陈志鹏
+ * on 2016/12/19.
  */
 
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>
@@ -37,8 +39,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
 
         if (mOpenAutoLoadMore){
-            mAutoLoadMore = true;
             mLoadFailed = false;
+            mLoadState = LOADING;
         }
 
         notifyDataSetChanged();
@@ -46,15 +48,16 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     public void addData(List<T> data){
         if (data != null){
-            final int startPos = mData.size();
+            final int startPos = mData.size() + getHeadSize();
+            final int itemCount = data.size() + getFootSize() + (canAutoLoadMore()?1:0);
             mData.addAll(data);
 
             if (mOpenAutoLoadMore){
-                mAutoLoadMore = true;
                 mLoadFailed = false;
+                mLoadState = LOADING;
             }
 
-            notifyItemRangeInserted(startPos,data.size());
+            notifyItemRangeChanged(startPos,itemCount);
         }
     }
 
@@ -135,6 +138,11 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         BaseViewHolder baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(layoutRes, parent, false));
         bind(baseViewHolder,layoutRes);
+
+        if (layoutRes == R.layout.default_loadmore){
+            //默认的加载更多
+            bindLoadMore(baseViewHolder);
+        }
         return baseViewHolder;
     }
 
@@ -157,17 +165,16 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             convertFoot(holder,mFootLayouts[index],index);
             return;
         }
-
         if (canAutoLoadMore()){
-            if (mLoadFailed){
-                holder.setVisibility(R.id.progressBar, View.GONE)
-                    .setText(R.id.load_tips,R.string.load_failed);
-            } else {
-                holder.setVisibility(R.id.progressBar, View.VISIBLE)
-                        .setText(R.id.load_tips,R.string.loading);
-                mOnLoadMoreListener.onLoadMore();
+            if (mLoadState != LOAD_COMPLETED){
+                if (!mLoadFailed){
+                    mLoadState = LOADING;
+                    mOnLoadMoreListener.onLoadMore();
+                }else{
+                    mLoadState = LOAD_FAILED;
+                }
             }
-            convertLoadMore(holder,mLoadFailed);
+            convertLoadMore(holder,mLoadState);
         }
     }
 
@@ -199,8 +206,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public void onViewAttachedToWindow(BaseViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         final int position = holder.getLayoutPosition();
-        if (position < getHeadSize() || (position > getHeadSize()+mData.size()
-                && position < mData.size() + getHeadSize() + getFootSize())) {
+        if (position < getHeadSize() || position >= getHeadSize()+mData.size()) {
             ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
             if (lp != null) {
                 if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
@@ -222,7 +228,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
                     if (position < getHeadSize()){
                         return gridLayoutManager.getSpanCount();
                     }
-                    if (position > getHeadSize() + mData.size()){
+                    if (position >= getHeadSize() + mData.size()){
                         return gridLayoutManager.getSpanCount();
                     }
                     return 1;
@@ -239,15 +245,42 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     }
 
-    public void convertLoadMore(BaseViewHolder holder, boolean loadResult){
+    public void convertLoadMore(BaseViewHolder holder, @LoadState int loadState){
+        if (loadState == LOADING){
+            holder.setVisibility(R.id.progressBar, View.VISIBLE)
+                    .setVisibility(R.id.load_tips, View.VISIBLE)
+                    .setVisibility(R.id.load_completed, View.GONE)
+                    .setText(R.id.load_tips,R.string.loading);
+        }else if (loadState == LOAD_FAILED) {
+            holder.setVisibility(R.id.progressBar, View.GONE)
+                    .setVisibility(R.id.load_tips, View.VISIBLE)
+                    .setVisibility(R.id.load_completed, View.GONE)
+                    .setText(R.id.load_tips, R.string.load_failed);
+        }else if (loadState == LOAD_COMPLETED){
+            holder.setVisibility(R.id.progressBar, View.GONE)
+                    .setVisibility(R.id.load_tips, View.GONE)
+                    .setVisibility(R.id.load_completed, View.VISIBLE);
+        }
+    }
 
+    private void bindLoadMore(BaseViewHolder holder){
+        holder.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull View view, int adapterPosition) {
+                if (mLoadState == LOAD_FAILED){
+                    // 点击加载更多
+                    mLoadFailed = false;
+                    notifyItemChanged(getItemCount()-1);
+                }
+            }
+        });
     }
 
     //======================= LoadMore ==========================
 
     private OnLoadMoreListener mOnLoadMoreListener;
 
-    private boolean mAutoLoadMore;
+    //private boolean mAutoLoadMore;
 
     private boolean mOpenAutoLoadMore;
 
@@ -256,22 +289,34 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @LayoutRes
     private int mLoadMoreLayout = R.layout.default_loadmore;
 
+    @LoadState
+    private int mLoadState;
+
     @Override
-    public void openAutoLoadMore() {
-        mAutoLoadMore = true;
-        mOpenAutoLoadMore = true;
+    public void openAutoLoadMore(boolean open) {
+        //mAutoLoadMore = true;
+        if (canAutoLoadMore()&&!open) {
+            notifyDataSetChanged();
+        }
+        if (!mOpenAutoLoadMore&&open) {
+            mLoadFailed = false;
+            mLoadState = LOADING;
+            notifyDataSetChanged();
+        }
+        mOpenAutoLoadMore = open;
     }
 
     @Override
     public void loadCompleted() {
+        mLoadState = LOAD_COMPLETED;
         if (canAutoLoadMore()) {
-            mAutoLoadMore = false;
-            notifyItemRemoved(getItemCount());
+            notifyItemChanged(getItemCount()-1);
         }
     }
 
     @Override
     public void loadFailed() {
+        mLoadState = LOAD_FAILED;
         if (canAutoLoadMore()) {
             mLoadFailed = true;
             notifyItemChanged(getItemCount()-1);
@@ -290,7 +335,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public boolean canAutoLoadMore() {
-        return mOnLoadMoreListener != null && mAutoLoadMore;
+        return mOnLoadMoreListener != null && mOpenAutoLoadMore;
     }
 
     //======================= LoadMore ==========================
