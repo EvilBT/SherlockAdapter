@@ -9,5 +9,5 @@ import android.view.View;
 
 public interface OnItemClickListener {
 
-    void onItemClick(@NonNull View view, int adapterPosition);
+    void onItemClick(@NonNull View view, int index);
 }

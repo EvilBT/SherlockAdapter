@@ -1,6 +1,7 @@
 package xyz.zpayh.myadapter;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +17,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.zpayh.adapter.OnItemClickListener;
 import xyz.zpayh.adapter.OnLoadMoreListener;
 import xyz.zpayh.myadapter.adapter.MyAdapter;
 
@@ -83,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 },2000);
+            }
+        });
+        mMyAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull View view, int adapterPosition) {
+
+                /*if (view instanceof TextView){
+                    Toast.makeText(view.getContext(), ((TextView)view).getText(), Toast.LENGTH_SHORT).show();
+                }*/
             }
         });
 

@@ -37,7 +37,7 @@ public interface LoadMore {
     int LOAD_FAILED = 2;
 
     /**
-     * 打开自动加载更多
+     * 设置自动加载更多开关
      * @param open true打开加载更多，false关闭
      */
     void openAutoLoadMore(boolean open);
@@ -60,7 +60,7 @@ public interface LoadMore {
 
     /**
      * 设置加载界面
-     * @param moreLayout
+     * @param moreLayout LoadMore布局
      */
     void setLoadMoreLayout(@LayoutRes int moreLayout);
 

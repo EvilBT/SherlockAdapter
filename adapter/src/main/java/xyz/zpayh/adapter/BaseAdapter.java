@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Created by 陈志鹏
  * on 2016/12/19.
+ * 一个简单通用的Adapter控件
  */
 
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>
@@ -28,24 +29,68 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     private int mFootLayouts[] = new int[0];
 
+    /**
+     * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
+     */
+    @LayoutRes
+    private int mEmptyLayout;
+
+    /**
+     * 加载更多监听，必须设置监听事件才会出现加载更多功能
+     */
+    private OnLoadMoreListener mOnLoadMoreListener;
+
+    /**
+     * 打开关闭自动加载更多功能，true为打开，false为关闭
+     * 只有同时设置了监听以及打开了自动加载更多功能，才会出现加载更多功能
+     */
+    private boolean mOpenAutoLoadMore;
+
+    /**
+     * LoadMore布局，加载成功，失败以及加载中都是显示此布局，
+     * 因此你可能要重写{@link #convertLoadMore(BaseViewHolder, int)}
+     * 来控制显示隐藏一些View，已经提供了默认实现
+     */
+    @LayoutRes
+    private int mLoadMoreLayout;
+
+    /**
+     * 加载更多状态，有{@link LoadMore#LOADING},{@link LoadMore#LOAD_COMPLETED}以及
+     * {@link LoadMore#LOAD_FAILED}三种状态，用来区分加载更多情况，可以参考
+     * {@link #convertLoadMore(BaseViewHolder, int)}
+     */
+    @LoadState
+    private int mLoadState;
+
+    private OnItemClickListener mOnItemClickListener;
+
     public BaseAdapter(){
         mData = new ArrayList<>();
+        mEmptyLayout = R.layout.default_empty;
+        mLoadMoreLayout = R.layout.default_loadmore;
     }
 
-    public void setData(List<T> data){
+    /**
+     * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
+     * @param data 数据集合
+     */
+    public void setData(@Nullable List<T> data){
         mData.clear();
         if (data != null){
             mData.addAll(data);
         }
 
         if (mOpenAutoLoadMore){
-            mLoadFailed = false;
             mLoadState = LOADING;
         }
 
         notifyDataSetChanged();
     }
 
+    /**
+     * 添加新数据，并有可能重置加载更多状态
+     * @param data 数据集合
+     */
     public void addData(List<T> data){
         if (data != null){
             final int startPos = mData.size() + getHeadSize();
@@ -53,7 +98,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             mData.addAll(data);
 
             if (mOpenAutoLoadMore){
-                mLoadFailed = false;
                 mLoadState = LOADING;
             }
 
@@ -61,6 +105,22 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
     }
 
+    public T getData(int index){
+        return mData.get(index);
+    }
+
+    public List<T> getData(){
+        return mData;
+    }
+
+    public void setOnItemClickListener(@Nullable OnItemClickListener onItemClickListener){
+        this.mOnItemClickListener = onItemClickListener;
+    }
+
+    /**
+     * 按调用顺序添加头部布局
+     * @param headLayout 布局id
+     */
     public void addHeadLayout(@LayoutRes int headLayout) {
 
         int indexToAdd = -1;
@@ -97,6 +157,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         return mHeadLayouts.length;
     }
 
+    /**
+     * 按调用顺序添加尾部布局
+     * @param footLayout 布局id
+     */
     public void addFootLayout(@LayoutRes int footLayout){
         int indexToAdd = -1;
 
@@ -137,54 +201,62 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int layoutRes) {
         BaseViewHolder baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(layoutRes, parent, false));
-        bind(baseViewHolder,layoutRes);
-
         if (layoutRes == R.layout.default_loadmore){
-            //默认的加载更多
+            //默认实现的加载更多添加点击事件
             bindLoadMore(baseViewHolder);
+        }else if (layoutRes == R.layout.default_empty){
+            bindEmpty(baseViewHolder);
+        }else{
+            bindData(baseViewHolder,layoutRes);
         }
         return baseViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(BaseViewHolder holder, int position) {
+    public final void onBindViewHolder(BaseViewHolder holder, int position) {
+
+        //没有数据时只显示空数据布局
         if (mData.isEmpty() && position == 0){
+            holder.mIndex = 0;
             convertEmpty(holder);
             return;
         }
 
         int index = position;
         if (index < getHeadSize()){
+            //头部布局
+            holder.mIndex = index;
             convertHead(holder,mHeadLayouts[index],index);
             return;
         }
         index = position - getHeadSize();
         if (index < mData.size()) {
+            //数据布局
+            holder.mIndex = index;
             final T data = mData.get(index);
             convert(holder, data, index);
             return;
         }
         index = position - getHeadSize() - mData.size();
         if (index < getFootSize()){
+            //尾部布局
+            holder.mIndex = index;
             convertFoot(holder,mFootLayouts[index],index);
             return;
         }
         if (canAutoLoadMore()){
-            if (mLoadState != LOAD_COMPLETED){
-                if (!mLoadFailed){
-                    mLoadState = LOADING;
-                    mOnLoadMoreListener.onLoadMore();
-                }else{
-                    mLoadState = LOAD_FAILED;
-                }
+            if (mLoadState == LOADING){
+                mOnLoadMoreListener.onLoadMore();
             }
+            //加载更多布局
             convertLoadMore(holder,mLoadState);
         }
     }
 
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         if (mData.isEmpty()){
+            //没有数据时只显示空布局
             return 1;
         }
         final int loadMoreCount = canAutoLoadMore()?1:0;
@@ -248,14 +320,34 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
     }
 
+    /**
+     * 如果要对头布局进行处理可重写此方法
+     * @param holder 布局holder
+     * @param headLayout 布局id，跟index可以确定布局是第几个布局
+     * @param index 添加时的顺序
+     */
     public void convertHead(BaseViewHolder holder, @LayoutRes int headLayout, int index){
 
     }
 
+    /**
+     * 如果要对尾布局进行处理可重写此方法
+     * @param holder 布局holder
+     * @param footLayout 布局id，跟index可以确定布局是第几个布局
+     * @param index 添加时的顺序
+     */
     public void convertFoot(BaseViewHolder holder, @LayoutRes int footLayout, int index){
 
     }
 
+    /**
+     * 如果设置了自定义加载更多布局，则需要重写此方法，然后根据 loadState 的值来控制显示
+     * 、隐藏布局。具体可以参考默认实现。
+     * @param holder 布局holder
+     * @param loadState 是 {@link LoadMore#LOADING}、{@link LoadMore#LOAD_COMPLETED}
+     *                  或者{@link LoadMore#LOAD_FAILED} 之一，分别对应加载中，完成加载，
+     *                  还有加载失败三种情况
+     */
     public void convertLoadMore(BaseViewHolder holder, @LoadState int loadState){
         if (loadState == LOADING){
             holder.setVisibility(R.id.progressBar, View.VISIBLE)
@@ -277,45 +369,52 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
     }
 
+    /**
+     * 如果设置了自定义Empty布局，且想对其设置一些数据显示处理，可以重写此方法
+     */
     public void convertEmpty(BaseViewHolder holder){
 
     }
 
+    /**
+     * 默认加载更多的点击事件实现
+     */
     private void bindLoadMore(BaseViewHolder holder){
         holder.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull View view, int adapterPosition) {
                 if (mLoadState == LOAD_FAILED){
                     // 点击加载更多
-                    mLoadFailed = false;
+                    mLoadState = LOADING;
                     notifyItemChanged(getItemCount()-1);
                 }
             }
         });
     }
 
-    @LayoutRes
-    private int mEmptyLayout = R.layout.default_empty;
+    /**
+     * 默认空布局的点击事件实现
+     */
+    protected void bindEmpty(BaseViewHolder holder){}
+
+
+    private void bindData(BaseViewHolder baseViewHolder, int layoutRes) {
+        baseViewHolder.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(@NonNull View view, int adapterPosition) {
+                if (mOnItemClickListener != null){
+                    mOnItemClickListener.onItemClick(view, adapterPosition);
+                }
+            }
+        });
+        bind(baseViewHolder, layoutRes);
+    }
 
     public void setEmptyLayout(@LayoutRes int emptyLayout){
         mEmptyLayout = emptyLayout;
     }
 
     //======================= LoadMore ==========================
-
-    private OnLoadMoreListener mOnLoadMoreListener;
-
-    //private boolean mAutoLoadMore;
-
-    private boolean mOpenAutoLoadMore;
-
-    private boolean mLoadFailed;
-
-    @LayoutRes
-    private int mLoadMoreLayout = R.layout.default_loadmore;
-
-    @LoadState
-    private int mLoadState;
 
     @Override
     public void openAutoLoadMore(boolean open) {
@@ -324,7 +423,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             notifyDataSetChanged();
         }
         if (!mOpenAutoLoadMore&&open) {
-            mLoadFailed = false;
             mLoadState = LOADING;
             notifyDataSetChanged();
         }
@@ -343,7 +441,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public void loadFailed() {
         mLoadState = LOAD_FAILED;
         if (canAutoLoadMore()) {
-            mLoadFailed = true;
+            //mLoadFailed = true;
             notifyItemChanged(getItemCount()-1);
         }
     }

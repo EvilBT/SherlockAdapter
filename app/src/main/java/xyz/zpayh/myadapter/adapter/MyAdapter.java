@@ -1,14 +1,9 @@
 package xyz.zpayh.myadapter.adapter;
 
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import xyz.zpayh.adapter.BaseAdapter;
 import xyz.zpayh.adapter.BaseViewHolder;
-import xyz.zpayh.adapter.OnItemClickListener;
 import xyz.zpayh.myadapter.R;
 
 /**
@@ -45,14 +40,6 @@ public class MyAdapter extends BaseAdapter<String> {
 
     @Override
     public void bind(BaseViewHolder holder, int viewType) {
-        holder.setClickable(R.id.text,true)
-                .setOnItemClickListener(new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(@NonNull View view, int adapterPosition) {
-                        if (view instanceof TextView){
-                            Toast.makeText(view.getContext(), ((TextView)view).getText(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        holder.setClickable(R.id.text,true);
     }
 }
