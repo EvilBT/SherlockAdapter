@@ -27,13 +27,11 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     private boolean mInitClickListener;
 
-    int mIndex;
-
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (mOnItemClickListener != null){
-                mOnItemClickListener.onItemClick(v,mIndex);
+                mOnItemClickListener.onItemClick(v,getAdapterPosition());
             }
         }
     };
@@ -50,10 +48,6 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
             mInitClickListener = true;
             this.itemView.setOnClickListener(mOnClickListener);
         }
-    }
-
-    public int getIndex(){
-        return mIndex;
     }
 
     /**

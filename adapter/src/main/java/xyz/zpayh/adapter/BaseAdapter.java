@@ -1,5 +1,6 @@
 package xyz.zpayh.adapter;
 
+import android.support.annotation.CheckResult;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     private int mEmptyLayout;
 
     /**
+     * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
+     */
+    @LayoutRes
+    private int mErrorLayout;
+
+    /**
      * 加载更多监听，必须设置监听事件才会出现加载更多功能
      */
     private OnLoadMoreListener mOnLoadMoreListener;
@@ -67,6 +74,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public BaseAdapter(){
         mData = new ArrayList<>();
         mEmptyLayout = R.layout.default_empty;
+        mErrorLayout = R.layout.default_error;
         mLoadMoreLayout = R.layout.default_loadmore;
     }
 
@@ -83,7 +91,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
         }
-
+        mShowErrorView = false;
         notifyDataSetChanged();
     }
 
@@ -92,21 +100,34 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * @param data 数据集合
      */
     public void addData(List<T> data){
-        if (data != null){
-            final int startPos = mData.size() + getHeadSize();
-            final int itemCount = data.size() + getFootSize() + (canAutoLoadMore()?1:0);
-            mData.addAll(data);
-
-            if (mOpenAutoLoadMore){
-                mLoadState = LOADING;
-            }
-
-            notifyItemRangeChanged(startPos,itemCount);
+        if (data == null){
+            return;
         }
+        final int startPos = mData.size() + getHeadSize();
+        final int itemCount = data.size() + getFootSize() + (canAutoLoadMore()?1:0);
+        mData.addAll(data);
+
+        if (mOpenAutoLoadMore){
+            mLoadState = LOADING;
+        }
+        mShowErrorView = false;
+        notifyItemRangeChanged(startPos,itemCount);
     }
 
-    public T getData(int index){
-        return mData.get(index);
+    /**
+     * 此position是AdapterPosition
+     * @param adapterPosition 当前项的AdapterPosition
+     * @return 如果当前项是数据项，则返回对应的数据，
+     *         如果不是，则返回null,所以使用前必须检查返回值
+     */
+    @CheckResult
+    @Nullable
+    public T getData(int adapterPosition){
+        final int index = adapterPosition - getHeadSize();
+        if (index >= 0 && index < mData.size()){
+            return mData.get(index);
+        }
+        return null;
     }
 
     public List<T> getData(){
@@ -206,6 +227,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             bindLoadMore(baseViewHolder);
         }else if (layoutRes == R.layout.default_empty){
             bindEmpty(baseViewHolder);
+        }else if (layoutRes == R.layout.default_error){
+            bindError(baseViewHolder);
         }else{
             bindData(baseViewHolder,layoutRes);
         }
@@ -215,9 +238,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @Override
     public final void onBindViewHolder(BaseViewHolder holder, int position) {
 
+        if (mShowErrorView && position == 0){
+            convertError(holder);
+            return;
+        }
         //没有数据时只显示空数据布局
         if (mData.isEmpty() && position == 0){
-            holder.mIndex = 0;
             convertEmpty(holder);
             return;
         }
@@ -225,14 +251,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         int index = position;
         if (index < getHeadSize()){
             //头部布局
-            holder.mIndex = index;
             convertHead(holder,mHeadLayouts[index],index);
             return;
         }
         index = position - getHeadSize();
         if (index < mData.size()) {
             //数据布局
-            holder.mIndex = index;
             final T data = mData.get(index);
             convert(holder, data, index);
             return;
@@ -240,7 +264,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         index = position - getHeadSize() - mData.size();
         if (index < getFootSize()){
             //尾部布局
-            holder.mIndex = index;
             convertFoot(holder,mFootLayouts[index],index);
             return;
         }
@@ -255,6 +278,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public final int getItemCount() {
+        if (mShowErrorView){
+            //显示加载错误时不显示其他
+            return 1;
+        }
         if (mData.isEmpty()){
             //没有数据时只显示空布局
             return 1;
@@ -265,6 +292,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public int getItemViewType(int position) {
+        if (mShowErrorView){
+            return mErrorLayout;
+        }
+
         if (mData.isEmpty()){
             return mEmptyLayout;
         }
@@ -288,14 +319,30 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @Override
     public void onViewAttachedToWindow(BaseViewHolder holder) {
         super.onViewAttachedToWindow(holder);
+
+        ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp == null || !(lp instanceof StaggeredGridLayoutManager.LayoutParams)) return;
+        StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) lp;
+
         final int position = holder.getLayoutPosition();
-        if (position < getHeadSize() || position >= getHeadSize()+mData.size()) {
-            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
-            if (lp != null) {
-                if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
-                    ((StaggeredGridLayoutManager.LayoutParams) lp).setFullSpan(true);
-                }
-            }
+        if (mShowErrorView && position == 0){
+            //显示数据异常
+            layoutParams.setFullSpan(true);
+            return;
+        }
+        if (mData.isEmpty() && position == 0){
+            //显示空布局
+            layoutParams.setFullSpan(true);
+            return;
+        }
+        if (position < getHeadSize()){
+            //显示头部
+            layoutParams.setFullSpan(true);
+            return;
+        }
+        if (position >= getHeadSize()+mData.size()){
+            //显示尾部及加载更多
+            layoutParams.setFullSpan(true);
         }
     }
 
@@ -303,21 +350,30 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-        if (manager != null && manager instanceof GridLayoutManager){
-            final GridLayoutManager gridLayoutManager = (GridLayoutManager) manager;
-            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                @Override
-                public int getSpanSize(int position) {
-                    if (position < getHeadSize()){
-                        return gridLayoutManager.getSpanCount();
-                    }
-                    if (position >= getHeadSize() + mData.size()){
-                        return gridLayoutManager.getSpanCount();
-                    }
-                    return 1;
+        if (manager == null || !(manager instanceof GridLayoutManager)) return;
+        final GridLayoutManager gridLayoutManager = (GridLayoutManager) manager;
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (mShowErrorView && position == 0){
+                    //显示数据异常
+                    return gridLayoutManager.getSpanCount();
                 }
-            });
-        }
+                if (mData.isEmpty() && position == 0){
+                    //显示空布局
+                    return gridLayoutManager.getSpanCount();
+                }
+                if (position < getHeadSize()){
+                    //显示头部
+                    return gridLayoutManager.getSpanCount();
+                }
+                if (position >= getHeadSize()+mData.size()){
+                    //显示尾部及加载更多
+                    return gridLayoutManager.getSpanCount();
+                }
+                return 1;
+            }
+        });
     }
 
     /**
@@ -377,6 +433,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     }
 
     /**
+     * 如果设置了自定义Error布局，且想对其设置一些数据显示处理，可以重写此方法
+     */
+    public void convertError(BaseViewHolder holder){
+
+    }
+
+    /**
      * 默认加载更多的点击事件实现
      */
     private void bindLoadMore(BaseViewHolder holder){
@@ -397,6 +460,11 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      */
     protected void bindEmpty(BaseViewHolder holder){}
 
+    /**
+     * 默认异常布局的点击事件实现
+     */
+    protected void bindError(BaseViewHolder holder){}
+
 
     private void bindData(BaseViewHolder baseViewHolder, int layoutRes) {
         baseViewHolder.setOnItemClickListener(new OnItemClickListener() {
@@ -414,6 +482,16 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         mEmptyLayout = emptyLayout;
     }
 
+    public void setErrorLayout(@LayoutRes int errorLayout){
+        mErrorLayout = errorLayout;
+    }
+
+    private boolean mShowErrorView;
+
+    public void showErrorView(){
+        mShowErrorView = true;
+        notifyDataSetChanged();
+    }
     //======================= LoadMore ==========================
 
     @Override

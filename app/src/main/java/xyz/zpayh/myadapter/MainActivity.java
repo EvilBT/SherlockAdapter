@@ -6,13 +6,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +49,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                mMyAdapter.showErrorView();
             }
         });
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
         mRecyclerView = (RecyclerView) findViewById(R.id.list);
         //mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        //mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
-        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(4,1));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
+        //mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(4,1));
         mMyAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mMyAdapter);
 
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             data.add(s);
         }
 
-        mMyAdapter.addHeadLayout(android.R.layout.simple_list_item_1);
+        //mMyAdapter.addHeadLayout(android.R.layout.simple_list_item_1);
         mMyAdapter.addFootLayout(android.R.layout.simple_list_item_1);
 
         mMyAdapter.openAutoLoadMore(true);
@@ -90,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
         mMyAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull View view, int adapterPosition) {
-
+                String data = mMyAdapter.getData(adapterPosition);
+                Toast.makeText(MainActivity.this, data, Toast.LENGTH_SHORT).show();
                 /*if (view instanceof TextView){
                     Toast.makeText(view.getContext(), ((TextView)view).getText(), Toast.LENGTH_SHORT).show();
                 }*/

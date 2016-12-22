@@ -5,4 +5,5 @@
 
     <string name="content_description">加载图标</string>
     <string name="empty_data">没有数据</string>
+    <string name="error_data">数据异常</string>
 </resources>
