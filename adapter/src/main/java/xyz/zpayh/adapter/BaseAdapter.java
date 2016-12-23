@@ -37,11 +37,15 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     private int mEmptyLayout;
 
     /**
-     * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
+     * Error布局，在没有数据的时间显示，默认是R.layout.default_error
      */
     @LayoutRes
     private int mErrorLayout;
 
+    /**
+     * 是否显示Error布局
+     */
+    private boolean mShowErrorView;
     /**
      * 加载更多监听，必须设置监听事件才会出现加载更多功能
      */
@@ -222,12 +226,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int layoutRes) {
         BaseViewHolder baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(layoutRes, parent, false));
-        if (layoutRes == R.layout.default_loadmore){
+        if (layoutRes == mLoadMoreLayout){
             //默认实现的加载更多添加点击事件
             bindLoadMore(baseViewHolder);
-        }else if (layoutRes == R.layout.default_empty){
+        }else if (layoutRes == mEmptyLayout){
             bindEmpty(baseViewHolder);
-        }else if (layoutRes == R.layout.default_error){
+        }else if (layoutRes == mErrorLayout){
             bindError(baseViewHolder);
         }else{
             bindData(baseViewHolder,layoutRes);
@@ -493,8 +497,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public void setErrorLayout(@LayoutRes int errorLayout){
         mErrorLayout = errorLayout;
     }
-
-    private boolean mShowErrorView;
 
     public void showErrorView(){
         mShowErrorView = true;
