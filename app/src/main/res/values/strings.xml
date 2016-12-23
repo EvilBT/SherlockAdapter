@@ -22,4 +22,7 @@
         <item>TensorFlow</item>
         <item>Swift</item>
     </string-array>
+    <string name="title_activity_multi_item">MultiItemActivity</string>
+    <string name="title_activity_expandable">ExpandableActivity</string>
+    <string name="details">详情</string>
 </resources>

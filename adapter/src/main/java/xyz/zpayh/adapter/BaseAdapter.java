@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>
     implements LoadMore{
 
-    private final List<T> mData;
+    protected final List<T> mData;
 
     private int mHeadLayouts[] = new int[0];
 
@@ -371,6 +371,14 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
                     //显示尾部及加载更多
                     return gridLayoutManager.getSpanCount();
                 }
+
+                final T data = getData(position);
+                if (data != null && data instanceof IMultiItem){
+                    int spanSize = ((IMultiItem)data).getSpanSize();
+                    return spanSize <= 0 ? 1 :
+                            spanSize > gridLayoutManager.getSpanCount()?
+                            gridLayoutManager.getSpanCount():spanSize;
+                }
                 return 1;
             }
         });
@@ -542,9 +550,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     //======================= LoadMore ==========================
 
     @LayoutRes
-    public abstract int getLayoutRes(int position);
+    public abstract int getLayoutRes(int index);
 
     public abstract void convert(BaseViewHolder holder, T data, int index);
 
-    public abstract void bind(BaseViewHolder holder,int viewType);
+    public abstract void bind(BaseViewHolder holder,int layoutRes);
 }
