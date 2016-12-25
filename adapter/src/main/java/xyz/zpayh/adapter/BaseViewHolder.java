@@ -1,10 +1,15 @@
 package xyz.zpayh.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.CheckResult;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -36,9 +41,24 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         }
     };
 
+    private OnItemLongClickListener mOnItemLongClickListener;
+
+    private boolean mInitLongClickListener;
+
+    private final View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (mOnItemLongClickListener != null){
+                return mOnItemLongClickListener.onItemLongClick(v,getAdapterPosition());
+            }
+            return false;
+        }
+    };
+
     public BaseViewHolder(View itemView) {
         super(itemView);
         mInitClickListener = false;
+        mInitLongClickListener = false;
     }
 
     void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -47,6 +67,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         if (onItemClickListener != null && !mInitClickListener){
             mInitClickListener = true;
             this.itemView.setOnClickListener(mOnClickListener);
+        }
+    }
+
+    void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener){
+        this.mOnItemLongClickListener = onItemLongClickListener;
+
+        if (onItemLongClickListener != null && !mInitLongClickListener){
+            mInitLongClickListener = true;
+            this.itemView.setOnLongClickListener(mOnLongClickListener);
         }
     }
 
@@ -68,6 +97,24 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    /**
+     * 设置响应长按事件，如果设置了clickable为true的话，在{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}
+     * 中会得到响应事件的回调,详情参考{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}
+     * @param id 响应点击事件的View Id
+     * @param longClickable true响应长按事件，false不响应长按事件
+     */
+    public BaseViewHolder setLongClickable(@IdRes int id, boolean longClickable){
+        View view = find(id);
+        if (view != null){
+            if (longClickable){
+                view.setOnClickListener(mOnClickListener);
+            }else{
+                view.setOnClickListener(null);
+            }
+        }
+        return this;
+    }
+
     public BaseViewHolder setText(@IdRes int textId, String text){
         TextView textView = find(textId);
         if (textView != null){
@@ -79,6 +126,30 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
     public BaseViewHolder setText(@IdRes int textId, @StringRes int stringId){
         String text = itemView.getResources().getString(stringId);
         return setText(textId,text);
+    }
+
+    public BaseViewHolder setImage(@IdRes int imageId, @DrawableRes int resId){
+        ImageView imageView = find(imageId);
+        if (imageView != null){
+            imageView.setImageResource(resId);
+        }
+        return this;
+    }
+
+    public BaseViewHolder setImage(@IdRes int imageId,@Nullable Drawable drawable){
+        ImageView imageView = find(imageId);
+        if (imageView != null){
+            imageView.setImageDrawable(drawable);
+        }
+        return this;
+    }
+
+    public BaseViewHolder setImage(@IdRes int imageId,Bitmap bm){
+        ImageView imageView = find(imageId);
+        if (imageView != null){
+            imageView.setImageBitmap(bm);
+        }
+        return this;
     }
 
     /**
@@ -123,5 +194,25 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         mIdsAndViews[indexToAdd] = viewId;
         mIdsAndViews[indexToAdd+1] = itemView.findViewById(viewId);
         return (T) mIdsAndViews[indexToAdd+1];
+    }
+
+    /**
+     * 根据当前id查找对应的ImageView控件
+     * @param imageId ImageView id
+     * @return 返回当前id对应的ImageView控件，如果没有，则返回null
+     */
+    @CheckResult
+    public ImageView findImage(@IdRes int imageId){
+        return find(imageId);
+    }
+
+    /**
+     * 根据当前id查找对应的TextView控件
+     * @param textId TextView id
+     * @return 返回当前id对应的TextView控件，如果没有，则返回null
+     */
+    @CheckResult
+    public TextView findText(@IdRes int textId){
+        return find(textId);
     }
 }

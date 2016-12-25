@@ -16,15 +16,18 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by 陈志鹏
- * on 2016/12/19.
- * 一个简单通用的Adapter控件
+ * 文 件 名: BaseAdapter
+ * 创 建 人: 陈志鹏
+ * 创建日期: 2016/12/25 02:38
+ * 邮   箱: ch_zh_p@qq.com
+ * 修改时间:
+ * 修改备注:
  */
 
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder>
     implements LoadMore{
 
-    protected final List<T> mData;
+    protected final List<T> mData = new ArrayList<>();
 
     private int mHeadLayouts[] = new int[0];
 
@@ -34,13 +37,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
      */
     @LayoutRes
-    private int mEmptyLayout;
+    private int mEmptyLayout = R.layout.default_empty;
 
     /**
      * Error布局，在没有数据的时间显示，默认是R.layout.default_error
      */
     @LayoutRes
-    private int mErrorLayout;
+    private int mErrorLayout = R.layout.default_error;
 
     /**
      * 是否显示Error布局
@@ -63,7 +66,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * 来控制显示隐藏一些View，已经提供了默认实现
      */
     @LayoutRes
-    private int mLoadMoreLayout;
+    private int mLoadMoreLayout = R.layout.default_loadmore;
 
     /**
      * 加载更多状态，有{@link LoadMore#LOADING},{@link LoadMore#LOAD_COMPLETED}以及
@@ -75,12 +78,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     private OnItemClickListener mOnItemClickListener;
 
-    public BaseAdapter(){
-        mData = new ArrayList<>();
-        mEmptyLayout = R.layout.default_empty;
-        mErrorLayout = R.layout.default_error;
-        mLoadMoreLayout = R.layout.default_loadmore;
-    }
+    private OnItemLongClickListener mOnItemLongClickListener;
 
     /**
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
@@ -103,6 +101,25 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * 添加新数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
+    public void addData(T data){
+        if (data == null){
+            return;
+        }
+        final int startPos = mData.size() + getHeadSize();
+        final int itemCount = 1 + getFootSize() + (canAutoLoadMore()?1:0);
+        mData.add(data);
+
+        if (mOpenAutoLoadMore){
+            mLoadState = LOADING;
+        }
+        mShowErrorView = false;
+        notifyItemRangeChanged(startPos,itemCount);
+    }
+
+    /**
+     * 添加新数据，并有可能重置加载更多状态
+     * @param data 数据集合
+     */
     public void addData(List<T> data){
         if (data == null){
             return;
@@ -116,6 +133,80 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
         mShowErrorView = false;
         notifyItemRangeChanged(startPos,itemCount);
+    }
+
+    public void removeData(T data){
+        if (data == null || !mData.contains(data)){
+            return;
+        }
+
+        int index = mData.indexOf(data);
+        mData.remove(data);
+        notifyItemRemoved(getHeadSize()+index);
+    }
+
+    public void removeData(int adapterPosition){
+        int index = adapterPosition - getHeadSize();
+        if (index < 0 || index >= mData.size()){
+            return;
+        }
+        mData.remove(index);
+        notifyItemRemoved(adapterPosition);
+    }
+
+    public void removeHead(int adapterPosition){
+        if (adapterPosition < 0 || adapterPosition >= getHeadSize()){
+            return;
+        }
+
+        for (int i = adapterPosition; i < mHeadLayouts.length-1; i++) {
+            mHeadLayouts[i] = mHeadLayouts[i+1];
+            if (mHeadLayouts[i+1] == 0){
+                return;
+            }
+        }
+
+        mHeadLayouts[mHeadLayouts.length-1] = 0;
+        notifyItemRemoved(adapterPosition);
+    }
+
+    public void removeFoot(int adapterPosition){
+        int index = adapterPosition - getHeadSize() - mData.size();
+        if (index < 0 || index >= getFootSize()){
+            return;
+        }
+
+        for (int i = index; i < mFootLayouts.length-1; i++) {
+            mFootLayouts[i] = mFootLayouts[i+1];
+            if (mFootLayouts[i+1] == 0){
+                return;
+            }
+        }
+
+        mFootLayouts[mFootLayouts.length-1] = 0;
+        notifyItemRemoved(adapterPosition);
+    }
+
+    public void removeAllHead(){
+        int size = getHeadSize();
+        for (int i = 0; i < mHeadLayouts.length; i++) {
+            if(mHeadLayouts[i] == 0){
+                break;
+            }
+            mHeadLayouts[i] = 0;
+        }
+        notifyItemRangeRemoved(0,size);
+    }
+
+    public void removeAllFoot(){
+        int size = getFootSize();
+        for (int i = 0; i < mFootLayouts.length; i++) {
+            if (mFootLayouts[i] == 0){
+                break;
+            }
+            mFootLayouts[i] = 0;
+        }
+        notifyItemRangeRemoved(getHeadSize()+mData.size(),size);
     }
 
     /**
@@ -140,6 +231,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     public void setOnItemClickListener(@Nullable OnItemClickListener onItemClickListener){
         this.mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(@Nullable OnItemLongClickListener onItemLongClickListener){
+        this.mOnItemLongClickListener = onItemLongClickListener;
     }
 
     /**
@@ -485,6 +580,15 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
                 if (mOnItemClickListener != null){
                     mOnItemClickListener.onItemClick(view, adapterPosition);
                 }
+            }
+        });
+        baseViewHolder.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(@NonNull View view, int adapterPosition) {
+                if (mOnItemLongClickListener != null){
+                    return mOnItemLongClickListener.onItemLongClick(view, adapterPosition);
+                }
+                return false;
             }
         });
         bind(baseViewHolder, layoutRes);

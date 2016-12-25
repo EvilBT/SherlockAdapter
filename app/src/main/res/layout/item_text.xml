@@ -9,7 +9,7 @@
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
     <TextView
-        android:id="@+id/tv_act_title"
+        android:id="@+id/text"
         android:layout_gravity="center"
         tools:text="Hello World"
         style="@style/Base.TextAppearance.AppCompat.Display1"

@@ -7,6 +7,14 @@
     <string name="action_close">关闭加载</string>
     <string name="action_empty">空数据</string>
 
+    <string-array name="activity_title">
+
+        <item>HeadAndFootActivity</item>
+        <item>MultiItemActivity</item>
+        <item>ExpandableActivity</item>
+
+    </string-array>
+
     <string-array name="list">
         <item>Android</item>
         <item>iOS</item>

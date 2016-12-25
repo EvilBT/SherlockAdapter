@@ -62,13 +62,18 @@ public class ExpandableActivity extends AppCompatActivity {
             data.add(title);
         }
         Title title = new Title("Sherlock");
-        Title subTitle = new Title("你开心就好");
-        int size = random.nextInt(2)+2;
-        for (int i = 0; i < size; i++){
-            Details details = new Details("我是内容"+i);
-            subTitle.add(details);
+        for (int j = 0; j < 3; j++) {
+            Title subTitle = new Title("你开心就好"+j);
+            if (j == 1){
+                subTitle.setExpandable(true);
+            }
+            int size = random.nextInt(2) + 2;
+            for (int i = 0; i < size; i++) {
+                Details details = new Details("我是内容" + i+","+j);
+                subTitle.add(details);
+            }
+            title.add(subTitle);
         }
-        title.add(subTitle);
         data.add(3,title);
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
@@ -81,7 +86,7 @@ public class ExpandableActivity extends AppCompatActivity {
                         if (expandable.isExpandable()){
                             adapter.collapse(adapterPosition);
                         }else{
-                            adapter.expand(adapterPosition);
+                            adapter.expandAll(adapterPosition);
                         }
                     }
                 }
