@@ -5,7 +5,6 @@ import java.util.List;
 
 import xyz.zpayh.adapter.IExpandable;
 import xyz.zpayh.adapter.IMultiItem;
-import xyz.zpayh.myadapter.R;
 
 /**
  * 文 件 名: Title
@@ -23,9 +22,12 @@ public class Title implements IExpandable{
 
     public String mTitle;
 
-    public Title(String title) {
+    private int mLayoutId;
+
+    public Title(String title,int layoutId) {
         mTitle = title;
         mItems = new ArrayList<>();
+        mLayoutId = layoutId;
     }
 
     public void add(IMultiItem item){
@@ -49,7 +51,7 @@ public class Title implements IExpandable{
 
     @Override
     public int getLayoutRes() {
-        return R.layout.item_title;
+        return mLayoutId;
     }
 
     @Override

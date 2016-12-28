@@ -76,6 +76,7 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
     }
 }
 ```
+![添加头部](http://o9qzkbu2x.bkt.clouddn.com/8.jpg?imageMogr2/auto-orient/thumbnail/300x)
 ### 添加尾部FootLayout
 ``` java 
 adapter.addFootLayout(R.layout.item_foot);
@@ -89,6 +90,7 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
     }
 }
 ```
+![添加尾部](http://o9qzkbu2x.bkt.clouddn.com/7.jpg?imageMogr2/auto-orient/thumbnail/300x)
 具体参考[`HeadAndFootActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/HeadAndFootActivity.java)
 ### 设置点击事件
 在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setClickable(ID,true);`启用item的子view的点击事件，并设置一下`BaseAdapter.setOnItemClickListener()`就可以了，详情参考[`MainActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MainActivity.java)里的Adapter。如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。
@@ -106,16 +108,20 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
             }
         });
 ``` 
-
+![正在自动加载](http://o9qzkbu2x.bkt.clouddn.com/4.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![完成加载](http://o9qzkbu2x.bkt.clouddn.com/1.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![加载失败](http://o9qzkbu2x.bkt.clouddn.com/3.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![没有数据](http://o9qzkbu2x.bkt.clouddn.com/2.jpg?imageMogr2/auto-orient/thumbnail/300x)
 ### 支持多布局
 继承*BaseMultiAdapter*抽象类，数据类型实现*IMultiItem*接口即可。
 具体参考Demo中的[`MultiItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiItemActivity.java)
+![多布局](http://o9qzkbu2x.bkt.clouddn.com/5.jpg?imageMogr2/auto-orient/thumbnail/300x)
 ### 支持伸缩子项
 继承BaseExpandableAdapter，如果有可子项需要伸缩，数据类型实现*IExpandable*，子项数据类型实现*IMultiItem*，如果
 没有子项可伸缩，则数据类型实现*IMultiItem*即可，如果子项也有它的子项，则子项也需要实现*IExpandable*，子项的子项数据类型
 实现*IMultiItem*接口。详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java)
 更多细节请下载Demo查看源代码。
-
+![伸缩子项](http://o9qzkbu2x.bkt.clouddn.com/6.jpg?imageMogr2/auto-orient/thumbnail/300x)
 ## License
 
 > Copyright (C) 2016 zpayh.

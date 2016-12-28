@@ -15,8 +15,11 @@ import xyz.zpayh.myadapter.R;
 public class Text implements IMultiItem{
     public String mText;
 
-    public Text(String text) {
+    private int mSpanSize;
+
+    public Text(String text,int spanSize) {
         mText = text;
+        mSpanSize = spanSize;
     }
 
     @Override
@@ -31,6 +34,6 @@ public class Text implements IMultiItem{
 
     @Override
     public int getSpanSize() {
-        return 0;
+        return mSpanSize;
     }
 }

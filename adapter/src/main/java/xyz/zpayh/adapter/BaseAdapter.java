@@ -76,6 +76,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @LoadState
     private int mLoadState;
 
+    private boolean mIsLoading = false;
+
     private OnItemClickListener mOnItemClickListener;
 
     private OnItemLongClickListener mOnItemLongClickListener;
@@ -92,6 +94,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
+            mIsLoading = false;
         }
         mShowErrorView = false;
         notifyDataSetChanged();
@@ -130,6 +133,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
+            mIsLoading = false;
         }
         mShowErrorView = false;
         notifyItemRangeChanged(startPos,itemCount);
@@ -367,7 +371,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             return;
         }
         if (canAutoLoadMore()){
-            if (mLoadState == LOADING){
+            if (mLoadState == LOADING && !mIsLoading){
+                mIsLoading = true;
                 mOnLoadMoreListener.onLoadMore();
             }
             //加载更多布局
@@ -610,7 +615,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public void openAutoLoadMore(boolean open) {
-        //mAutoLoadMore = true;
+        mIsLoading = false;
         if (canAutoLoadMore()&&!open) {
             notifyDataSetChanged();
         }
@@ -624,6 +629,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @Override
     public void loadCompleted() {
         mLoadState = LOAD_COMPLETED;
+        mIsLoading = false;
         if (canAutoLoadMore()) {
             notifyItemChanged(getItemCount()-1);
         }
@@ -632,8 +638,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     @Override
     public void loadFailed() {
         mLoadState = LOAD_FAILED;
+        mIsLoading = false;
         if (canAutoLoadMore()) {
-            //mLoadFailed = true;
             notifyItemChanged(getItemCount()-1);
         }
     }

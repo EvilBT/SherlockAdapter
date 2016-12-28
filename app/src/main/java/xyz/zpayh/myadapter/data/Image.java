@@ -31,6 +31,6 @@ public class Image implements IMultiItem{
 
     @Override
     public int getSpanSize() {
-        return 0;
+        return 1;
     }
 }

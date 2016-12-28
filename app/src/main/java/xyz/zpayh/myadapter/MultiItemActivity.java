@@ -1,11 +1,9 @@
 package xyz.zpayh.myadapter;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,16 +33,7 @@ public class MultiItemActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                startActivity(new Intent(MultiItemActivity.this,ExpandableActivity.class));
-            }
-        });
+        final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
         //recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,19 +64,32 @@ public class MultiItemActivity extends AppCompatActivity {
             }
         });
 
-        List<IMultiItem> data = new ArrayList<>();
+        final List<IMultiItem> data = new ArrayList<>();
 
         String[] list = getResources().getStringArray(R.array.list);
-        for (String s : list) {
-            data.add(new Text(s));
+        for (int i = 0; i < list.length; i++) {
+            data.add(new Text(list[i],i%3+1));
         }
 
         data.add(2,new Image(R.drawable.base_load_failed));
-        data.add(2,new Image(R.drawable.base_load_failed));
-        data.add(4,new Image(R.drawable.base_load_failed));
+        data.add(2,new Image(R.drawable.base_empty));
+        data.add(4,new Image(R.drawable.base_error));
         data.add(7,new Image(R.drawable.base_load_failed));
 
         adapter.setData(data);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshLayout.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setData(data);
+                        refreshLayout.setRefreshing(false);
+                    }
+                },2000);
+            }
+        });
     }
 
 }

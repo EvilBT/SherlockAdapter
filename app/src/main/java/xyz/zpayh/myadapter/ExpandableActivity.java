@@ -2,8 +2,6 @@ package xyz.zpayh.myadapter;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,15 +32,6 @@ public class ExpandableActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final MyExpandableAdapter adapter = new MyExpandableAdapter();
@@ -53,7 +42,7 @@ public class ExpandableActivity extends AppCompatActivity {
         String[] list = getResources().getStringArray(R.array.list);
         Random random = new Random();
         for (String s : list) {
-            Title title = new Title(s);
+            Title title = new Title(s,R.layout.item_title);
             int size = random.nextInt(2)+2;
             for (int i = 0; i < size; i++){
                 Details details = new Details("我是内容"+i);
@@ -61,9 +50,9 @@ public class ExpandableActivity extends AppCompatActivity {
             }
             data.add(title);
         }
-        Title title = new Title("Sherlock");
+        Title title = new Title("有子标题的标题",R.layout.item_title);
         for (int j = 0; j < 3; j++) {
-            Title subTitle = new Title("你开心就好"+j);
+            Title subTitle = new Title("子标题"+j,R.layout.item_sub_title);
             if (j == 1){
                 subTitle.setExpandable(true);
             }

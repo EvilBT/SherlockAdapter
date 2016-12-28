@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
     private int mState = LOAD_ADD;
 
     private MyAdapter mAdapter;
+
+    private List<String> data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +39,7 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
         // 模拟数据
-        final List<String> data = new ArrayList<>();
+        data = new ArrayList<>();
 
         String[] list = getResources().getStringArray(R.array.list);
         for (String s : list) {
@@ -62,6 +65,7 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
         mAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
+                Log.d("Sherlock","加载更多");
                 //模拟加载更多
                 recyclerView.postDelayed(new Runnable() {
                     @Override
@@ -74,7 +78,7 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
                             mAdapter.loadFailed();
                         }
                     }
-                },1500);
+                },6500);
             }
         });
 
@@ -91,16 +95,19 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
             case R.id.action_add:
                 setTitle("加载更多");
                 mAdapter.openAutoLoadMore(true);
+                mAdapter.setData(data);
                 mState = LOAD_ADD;
                 break;
             case R.id.action_failed:
                 setTitle("加载更多失败");
                 mAdapter.openAutoLoadMore(true);
+                mAdapter.setData(data);
                 mState = LOAD_FAILED;
                 break;
             case R.id.action_completed:
                 setTitle("没有更多数据");
                 mAdapter.openAutoLoadMore(true);
+                mAdapter.setData(data);
                 mState = LOAD_COMPLETED;
                 break;
             case R.id.action_empty:
