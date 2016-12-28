@@ -10,6 +10,7 @@
     <string-array name="activity_title">
 
         <item>HeadAndFootActivity</item>
+        <item>AutoLoadMoreActivity</item>
         <item>MultiItemActivity</item>
         <item>ExpandableActivity</item>
 

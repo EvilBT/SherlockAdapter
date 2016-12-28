@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         for (String s : list) {
             data.add(s);
         }
-
         adapter.setData(data);
     }
 }

@@ -25,7 +25,7 @@ public class MyAdapter extends BaseAdapter<String> {
 
     @Override
     public void convert(BaseViewHolder holder, String data, int index) {
-        holder.setText(R.id.text,data);
+        holder.setText(R.id.tv_act_title,data);
     }
 
     @Override
@@ -40,6 +40,7 @@ public class MyAdapter extends BaseAdapter<String> {
 
     @Override
     public void bind(BaseViewHolder holder, int viewType) {
-        holder.setClickable(R.id.text,true);
+        holder.setClickable(R.id.tv_act_title,true)
+                .setLongClickable(R.id.tv_act_title,true);
     }
 }
