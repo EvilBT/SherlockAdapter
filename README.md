@@ -1,4 +1,5 @@
 # SherlockAdapter
+[![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 一个封装了RecyclerView.Adapter一些常用功能的库。
 ## 封装的功能
@@ -16,6 +17,25 @@
 
 ## 注意事项
 先说注意事项，一般来讲，由于SherlockAdapter采用LayoutRes的值来作为ItemViewType返回，而ItemViewType是用来区分不同的Item的，所以如果不是同种Item，就不要使用同一个Layout文件，例如头部HeadLayout跟ItemLayout的布局是一样的情况下，就复制多一个Layout出来就行，不要共用一个Layout。
+
+## 开始配置
+**Step 1.** Add the JitPack repository to your build file
+
+Add it in your root build.gradle at the end of repositories:
+```
+allprojects {
+	repositories {
+		...
+		maven { url "https://jitpack.io" }
+	}
+}
+```
+**Step 2.** Add the dependency
+```
+dependencies {
+    compile 'com.github.EvilBT:SherlockAdapter:v1.0'
+}
+```
 
 ## 使用方法
 
@@ -42,12 +62,40 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     public abstract void bind(BaseViewHolder holder,int layoutRes);
 }
 ```
+### 添加头部HeadLayout
+``` java 
+adapter.addHeadLayout(R.layout.item_head);
+```
+然后在 `convertHead` 里控制显示。
+``` java
+public class HeadAndFootAdapter extends BaseAdapter<String> {
+
+    @Override
+    public void convertHead(BaseViewHolder holder, @LayoutRes int headLayout, int index) {
+        holder.setText(R.id.tv_head,"这是头部"+(index+1));
+    }
+}
+```
+### 添加尾部FootLayout
+``` java 
+adapter.addFootLayout(R.layout.item_foot);
+```
+然后在 `convertFoot` 里控制显示。
+``` java
+public class HeadAndFootAdapter extends BaseAdapter<String> {
+    @Override
+    public void convertFoot(BaseViewHolder holder, @LayoutRes int footLayout, int index) {
+        holder.setText(R.id.tv_foot,"这是尾部"+(index+1));
+    }
+}
+```
+具体参考[`HeadAndFootActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/HeadAndFootActivity.java)
 ### 设置点击事件
-在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setClickable(ID,true);`启用item的子view的点击事件，并设置一下`BaseAdapter.setOnItemClickListener()`就可以了，详情参考MainActivity里的Adapter。如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。
+在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setClickable(ID,true);`启用item的子view的点击事件，并设置一下`BaseAdapter.setOnItemClickListener()`就可以了，详情参考[`MainActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MainActivity.java)里的Adapter。如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。
 ### 设置长按事件
-在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setLongClickable(ID,true);`启用item的子view的长按事件，并设置一下`BaseAdapter.setOnItemLongClickListener()`就可以了，如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。基本使用方法与点击事件类似,具体参考Demo中的*MultiItemActivity*.
+在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setLongClickable(ID,true);`启用item的子view的长按事件，并设置一下`BaseAdapter.setOnItemLongClickListener()`就可以了，如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。基本使用方法与点击事件类似,具体参考Demo中的[`MultiItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiItemActivity.java).
 ### 开启自动加载更多功能
-参考 *AutoLoadMoreActivity* 的代码:
+参考 [`AutoLoadMoreActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/AutoLoadMoreActivity.java) 的代码:
 ``` java
         //必须设置事件监听与开启auto
         mAdapter.openAutoLoadMore(true);
@@ -61,11 +109,11 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
 ### 支持多布局
 继承*BaseMultiAdapter*抽象类，数据类型实现*IMultiItem*接口即可。
-具体参考Demo中的*MultiItemActivity*
+具体参考Demo中的[`MultiItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiItemActivity.java)
 ### 支持伸缩子项
 继承BaseExpandableAdapter，如果有可子项需要伸缩，数据类型实现*IExpandable*，子项数据类型实现*IMultiItem*，如果
 没有子项可伸缩，则数据类型实现*IMultiItem*即可，如果子项也有它的子项，则子项也需要实现*IExpandable*，子项的子项数据类型
-实现*IMultiItem*接口。详情参考Demo中的*ExpandableActivity*。
+实现*IMultiItem*接口。详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java)
 更多细节请下载Demo查看源代码。
 
 ## License
