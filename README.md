@@ -22,7 +22,7 @@
 **Step 1.** Add the JitPack repository to your build file
 
 Add it in your root build.gradle at the end of repositories:
-```
+``` gradle
 allprojects {
 	repositories {
 		...
@@ -31,7 +31,7 @@ allprojects {
 }
 ```
 **Step 2.** Add the dependency
-```
+``` gradle
 dependencies {
     compile 'com.github.EvilBT:SherlockAdapter:v1.0.1'
 }
@@ -90,8 +90,9 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
     }
 }
 ```
-![添加尾部](http://o9qzkbu2x.bkt.clouddn.com/7.jpg?imageMogr2/auto-orient/thumbnail/300x)
 具体参考[`HeadAndFootActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/HeadAndFootActivity.java)
+
+![添加尾部](http://o9qzkbu2x.bkt.clouddn.com/7.jpg?imageMogr2/auto-orient/thumbnail/300x)
 ### 设置点击事件
 在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setClickable(ID,true);`启用item的子view的点击事件，并设置一下`BaseAdapter.setOnItemClickListener()`就可以了，详情参考[`MainActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MainActivity.java)里的Adapter。如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。
 ### 设置长按事件
