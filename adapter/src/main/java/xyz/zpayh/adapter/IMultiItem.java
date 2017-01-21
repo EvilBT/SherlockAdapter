@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
  * 邮   箱: ch_zh_p@qq.com
  * 修改时间:
  * 修改备注:
+ *  移除了getViewType接口，添加
  */
 
 public interface IMultiItem {
@@ -23,10 +24,10 @@ public interface IMultiItem {
     @LayoutRes int getLayoutRes();
 
     /**
-     *
-     * @return 返回item类型，请返回一个唯一识别符
+     * 进行数据处理，显示文本，图片等内容
+     * @param holder Holder Helper
      */
-    int getViewType();
+    void convert(BaseViewHolder holder);
 
     /**
      * 在布局为{@link android.support.v7.widget.GridLayoutManager}时才有用处，

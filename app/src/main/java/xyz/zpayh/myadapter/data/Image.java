@@ -1,5 +1,6 @@
 package xyz.zpayh.myadapter.data;
 
+import xyz.zpayh.adapter.BaseViewHolder;
 import xyz.zpayh.adapter.IMultiItem;
 import xyz.zpayh.myadapter.R;
 
@@ -25,8 +26,8 @@ public class Image implements IMultiItem{
     }
 
     @Override
-    public int getViewType() {
-        return Constant.IMAGE;
+    public void convert(BaseViewHolder holder) {
+        holder.setImage(R.id.image, mImageId);
     }
 
     @Override

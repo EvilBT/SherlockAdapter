@@ -9,11 +9,16 @@ package xyz.zpayh.adapter;
  * 修改备注:
  */
 
-public abstract class BaseMultiAdapter<T extends IMultiItem> extends BaseAdapter<T> {
+public abstract class BaseMultiAdapter extends BaseAdapter<IMultiItem> {
 
     @Override
     public int getLayoutRes(int index) {
-        final T data = mData.get(index);
+        final IMultiItem data = mData.get(index);
         return data.getLayoutRes();
+    }
+
+    @Override
+    public void convert(BaseViewHolder holder, IMultiItem data, int index) {
+        data.convert(holder);
     }
 }

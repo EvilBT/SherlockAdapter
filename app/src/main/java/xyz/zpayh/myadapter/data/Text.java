@@ -1,5 +1,6 @@
 package xyz.zpayh.myadapter.data;
 
+import xyz.zpayh.adapter.BaseViewHolder;
 import xyz.zpayh.adapter.IMultiItem;
 import xyz.zpayh.myadapter.R;
 
@@ -28,8 +29,8 @@ public class Text implements IMultiItem{
     }
 
     @Override
-    public int getViewType() {
-        return Constant.TEXT;
+    public void convert(BaseViewHolder holder) {
+
     }
 
     @Override

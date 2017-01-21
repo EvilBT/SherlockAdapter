@@ -1,6 +1,7 @@
 package xyz.zpayh.adapter;
 
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.CheckResult;
 import android.support.annotation.DrawableRes;
@@ -128,6 +129,14 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return setText(textId,text);
     }
 
+    public BaseViewHolder setText(@IdRes int textId, TextCallback callback){
+        TextView textView = find(textId);
+        if (textView != null && callback != null){
+            callback.callback(textView);
+        }
+        return this;
+    }
+
     public BaseViewHolder setImage(@IdRes int imageId, @DrawableRes int resId){
         ImageView imageView = find(imageId);
         if (imageView != null){
@@ -148,6 +157,29 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView = find(imageId);
         if (imageView != null){
             imageView.setImageBitmap(bm);
+        }
+        return this;
+    }
+
+    public BaseViewHolder setImage(@IdRes int imageId,ImageCallback callback){
+        ImageView imageView = find(imageId);
+        if (imageView != null && callback != null){
+            callback.callback(imageView);
+        }
+        return this;
+    }
+
+    public BaseViewHolder setView(@IdRes int viewId, ViewCallback callback){
+        if (find(viewId) != null && callback != null){
+            callback.callback(find(viewId));
+        }
+        return this;
+    }
+
+    public BaseViewHolder setTypeface(@IdRes int textId, Typeface typeface){
+        TextView textView = find(textId);
+        if (textView != null){
+            textView.setTypeface(typeface);
         }
         return this;
     }

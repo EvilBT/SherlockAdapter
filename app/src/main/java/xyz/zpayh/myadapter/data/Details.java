@@ -1,6 +1,7 @@
 package xyz.zpayh.myadapter.data;
 
-import xyz.zpayh.adapter.IMultiItem;
+import xyz.zpayh.adapter.BaseViewHolder;
+import xyz.zpayh.adapter.DefaultMultiItem;
 import xyz.zpayh.myadapter.R;
 
 /**
@@ -12,25 +13,14 @@ import xyz.zpayh.myadapter.R;
  * 修改备注:
  */
 
-public class Details implements IMultiItem{
-    public String mContent;
+public class Details extends DefaultMultiItem<String>{
 
     public Details(String content) {
-        mContent = content;
+        super(R.layout.item_details,content);
     }
 
     @Override
-    public int getLayoutRes() {
-        return R.layout.item_details;
-    }
-
-    @Override
-    public int getViewType() {
-        return Constant.DETAILS;
-    }
-
-    @Override
-    public int getSpanSize() {
-        return 0;
+    public void convert(BaseViewHolder holder) {
+        holder.setText(R.id.content,mData);
     }
 }

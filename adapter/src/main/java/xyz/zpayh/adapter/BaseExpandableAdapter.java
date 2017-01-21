@@ -10,9 +10,10 @@ import java.util.List;
  * 邮   箱: ch_zh_p@qq.com
  * 修改时间:
  * 修改备注:
+ *  用{@link ExpandableAdapter}重新实现逻辑，请用{@link ExpandableAdapter}
  */
-
-public abstract class BaseExpandableAdapter extends BaseMultiAdapter<IMultiItem> {
+@Deprecated
+abstract class BaseExpandableAdapter extends BaseMultiAdapter {
 
     /**
      * 展开下级菜单

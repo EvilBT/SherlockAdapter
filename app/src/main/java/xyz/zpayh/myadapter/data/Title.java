@@ -1,10 +1,10 @@
 package xyz.zpayh.myadapter.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.support.annotation.LayoutRes;
 
-import xyz.zpayh.adapter.IExpandable;
-import xyz.zpayh.adapter.IMultiItem;
+import xyz.zpayh.adapter.BaseViewHolder;
+import xyz.zpayh.adapter.DefaultExpandable;
+import xyz.zpayh.myadapter.R;
 
 /**
  * 文 件 名: Title
@@ -15,8 +15,18 @@ import xyz.zpayh.adapter.IMultiItem;
  * 修改备注:
  */
 
-public class Title implements IExpandable{
-    private boolean mExpandable;
+public class Title extends DefaultExpandable<String>{
+
+    public Title(@LayoutRes int layoutRes, String title) {
+        super(layoutRes, title);
+    }
+
+    @Override
+    public void convert(BaseViewHolder holder) {
+        holder.setText(R.id.title,mData);
+    }
+
+    /*private boolean mExpandable;
 
     private final List<IMultiItem> mItems;
 
@@ -55,12 +65,12 @@ public class Title implements IExpandable{
     }
 
     @Override
-    public int getViewType() {
-        return Constant.TITLE;
+    public void convert(BaseViewHolder holder) {
+        holder.setText(R.id.title,mTitle);
     }
 
     @Override
     public int getSpanSize() {
         return 0;
-    }
+    }*/
 }
