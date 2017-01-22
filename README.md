@@ -1,6 +1,10 @@
 # SherlockAdapter
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
+## 新增功能
+
+- 2017-01-22 新添加支持多选item,可实现例如选择多张图片的功能
+
 一个封装了RecyclerView.Adapter一些常用功能的库。
 ## 封装的功能
 - item 的点击事件
@@ -14,6 +18,7 @@
 - 支持添加任意数量的FootLayout
 - 支持多布局数据界面
 - 支持伸缩子项，理论上无层次限制
+- 新添加支持多选item,可实现例如选择多张图片的功能
 
 ## 注意事项
 先说注意事项，一般来讲，由于SherlockAdapter采用LayoutRes的值来作为ItemViewType返回，而ItemViewType是用来区分不同的Item的，所以如果不是同种Item，就不要使用同一个Layout文件，例如头部HeadLayout跟ItemLayout的布局是一样的情况下，就复制多一个Layout出来就行，不要共用一个Layout。
@@ -33,7 +38,7 @@ allprojects {
 **Step 2.** Add the dependency
 ``` gradle
 dependencies {
-    compile 'com.github.EvilBT:SherlockAdapter:v1.0.2'
+    compile 'com.github.EvilBT:SherlockAdapter:v1.0.3'
 }
 ```
 
@@ -122,9 +127,16 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
 继承BaseExpandableAdapter，如果有可子项需要伸缩，数据类型实现*IExpandable*(可以简单继承[`DefaultExpandable`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultExpandable.java))，子项数据类型实现*IMultiItem*，如果
 没有子项可伸缩，则数据类型实现*IMultiItem*即可，如果子项也有它的子项，则子项也需要实现*IExpandable*，子项的子项数据类型
 实现*IMultiItem*接口。详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java)
-更多细节请下载Demo查看源代码。
 
 ![伸缩子项](http://o9qzkbu2x.bkt.clouddn.com/6.jpg?imageMogr2/auto-orient/thumbnail/300x)
+
+### 多选列表
+继承BaseMultiSelectAdapter，数据类型实现*IMultiSelectItem*接口(可以简单继承[`DefaultMultiSelectItem`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultMultiSelectItem.java))即可，具体可以参考Demo中[`MultiSelectItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiSelectItemActivity.java)的实现方式。
+
+![多选列表](http://o9qzkbu2x.bkt.clouddn.com/9.png?imageMogr2/auto-orient/thumbnail/300x)
+
+更多细节请下载Demo查看源代码。
+
 ## License
 
 > Copyright (C) 2016 zpayh.
