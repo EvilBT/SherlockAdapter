@@ -11,8 +11,6 @@ import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.CheckedTextView;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +39,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         public void onClick(View v) {
             if (mOnItemClickListener != null){
                 mOnItemClickListener.onItemClick(v,getAdapterPosition());
+            }
+        }
+    };
+
+    private final View.OnClickListener mOnItemCheckedChangeClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mOnItemCheckedChangeListener != null && v instanceof Checkable){
+                mOnItemCheckedChangeListener.onItemCheck(v,((Checkable) v).isChecked(),getAdapterPosition());
             }
         }
     };
@@ -125,46 +132,25 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    /**
+     *
+     * @param id
+     * @param checkable
+     * @return
+     */
     public BaseViewHolder setCheckable(@IdRes int id, boolean checkable){
         final View view = find(id);
         if (view == null){
             return this;
         }
         if (!checkable){
-            if (view instanceof CompoundButton){
-                ((CompoundButton) view).setOnCheckedChangeListener(null);
-            }else if (view instanceof CheckedTextView){
+            if (view instanceof Checkable){
                 view.setOnClickListener(null);
             }
             return this;
         }
-        if (view instanceof CompoundButton){
-            /*((CompoundButton) view).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (mOnItemCheckedChangeListener != null){
-                        mOnItemCheckedChangeListener.onItemCheck(view,isChecked,getAdapterPosition());
-                    }
-                }
-            });*/
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemCheckedChangeListener != null){
-                        mOnItemCheckedChangeListener.onItemCheck(view,((CompoundButton) view).isChecked(),getAdapterPosition());
-                    }
-                }
-            });
-        }else if (view instanceof CheckedTextView){
-            final CheckedTextView textView = (CheckedTextView) view;
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemCheckedChangeListener != null){
-                        mOnItemCheckedChangeListener.onItemCheck(view,textView.isChecked(),getAdapterPosition());
-                    }
-                }
-            });
+        if (view instanceof Checkable){
+            view.setOnClickListener(mOnItemCheckedChangeClickListener);
         }
         return this;
     }

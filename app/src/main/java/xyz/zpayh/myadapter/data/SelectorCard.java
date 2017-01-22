@@ -10,13 +10,14 @@ import xyz.zpayh.myadapter.R;
 
 public class SelectorCard extends DefaultMultiSelectItem<Integer> {
 
-    public SelectorCard(int index) {
-        super(R.layout.item_select,index);
+    public SelectorCard(int data) {
+        //只需要设置好布局文件，以及对应的实现Checkable接口的View的id即可。
+        super(R.layout.item_select,R.id.checkbox,data);
     }
 
     @Override
     public void convert(BaseViewHolder holder) {
-        holder.setText(R.id.text,isChecked()?getData()+"被选中":getData()+"未选中")
-                .setChecked(R.id.checkbox,isChecked());
+        //根据是否选中更新文本
+        holder.setText(R.id.text,isChecked()?getData()+"被选中":getData()+"未选中");
     }
 }

@@ -1,5 +1,7 @@
 package xyz.zpayh.adapter;
 
+import android.support.annotation.IdRes;
+
 /**
  * 文 件 名: IMultiSelectItem
  * 创 建 人: 陈志鹏
@@ -15,4 +17,12 @@ public interface IMultiSelectItem extends IMultiItem{
     void setChecked(boolean checked);
 
     boolean isChecked();
+
+    /**
+     * 用于点击更新选中状态的view id,此view 必须实现Checkable接口，
+     * 否则应该是无效的
+     * @return 返回一个实现了Checkable接口的View id.
+     */
+    @IdRes
+    int getCheckableViewId();
 }

@@ -1,6 +1,9 @@
 package xyz.zpayh.adapter;
 
+import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
+
+import static android.view.View.NO_ID;
 
 /**
  * Created by Administrator on 2017/1/22.
@@ -11,22 +14,30 @@ public abstract class DefaultMultiSelectItem<T> implements IMultiSelectItem {
     @LayoutRes
     private final int mLayoutRes;
 
+    @IdRes
+    protected int mCheckableViewId;
+
     private boolean mChecked;
 
     private int mSpanSize;
 
     protected T mData;
 
-    public DefaultMultiSelectItem(int layoutRes) {
-        this(layoutRes,null);
+    public DefaultMultiSelectItem(@LayoutRes int layoutRes){
+        this(layoutRes,NO_ID);
     }
 
-    public DefaultMultiSelectItem(int layoutRes, T data) {
-        this(layoutRes, data, 1);
+    public DefaultMultiSelectItem(@LayoutRes int layoutRes, @IdRes int checkableViewId) {
+        this(layoutRes,checkableViewId,null);
     }
 
-    public DefaultMultiSelectItem(int layoutRes, T data, int spanSize) {
+    public DefaultMultiSelectItem(@LayoutRes int layoutRes, @IdRes int checkableViewId, T data) {
+        this(layoutRes,checkableViewId, data, 1);
+    }
+
+    public DefaultMultiSelectItem(@LayoutRes int layoutRes, @IdRes int checkableViewId, T data, int spanSize) {
         this.mLayoutRes = layoutRes;
+        this.mCheckableViewId = checkableViewId;
         this.mData = data;
         this.mChecked = false;
         this.mSpanSize = spanSize;
@@ -48,6 +59,11 @@ public abstract class DefaultMultiSelectItem<T> implements IMultiSelectItem {
     @Override
     public boolean isChecked() {
         return this.mChecked;
+    }
+
+    @Override
+    public int getCheckableViewId() {
+        return mCheckableViewId;
     }
 
     @Override

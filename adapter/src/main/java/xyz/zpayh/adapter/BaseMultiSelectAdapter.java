@@ -7,7 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/1/22.
+ * 文 件 名: BaseMultiAdapter
+ * 创 建 人: 陈志鹏
+ * 创建日期: 2016/01/22 12:38
+ * 邮   箱: ch_zh_p@qq.com
+ * 修改时间: 2016/01/23 0:51
+ * 修改备注:
  */
 
 public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectItem>
@@ -23,6 +28,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
 
     @Override
     public void convert(BaseViewHolder holder, IMultiSelectItem data, int index) {
+        holder.setChecked(data.getCheckableViewId(),data.isChecked());
         data.convert(holder);
     }
 
@@ -63,6 +69,12 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
         baseViewHolder.setOnItemCheckedChangeListener(new OnItemCheckedChangeListener() {
             @Override
             public void onItemCheck(@NonNull View view, boolean isChecked, int adapterPosition) {
+                final int id = view.getId();
+                final IMultiSelectItem item = getData(adapterPosition);
+                if (item != null && id == item.getCheckableViewId()){
+                    item.setChecked(isChecked);
+                    notifyItemChanged(adapterPosition);
+                }
                 if (mOnItemCheckedChangeListener != null){
                     mOnItemCheckedChangeListener.onItemCheck(view, isChecked, adapterPosition);
                 }
