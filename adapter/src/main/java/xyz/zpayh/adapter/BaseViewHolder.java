@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Checkable;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -56,6 +59,8 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         }
     };
 
+    private OnItemCheckedChangeListener mOnItemCheckedChangeListener;
+
     public BaseViewHolder(View itemView) {
         super(itemView);
         mInitClickListener = false;
@@ -78,6 +83,10 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
             mInitLongClickListener = true;
             this.itemView.setOnLongClickListener(mOnLongClickListener);
         }
+    }
+
+    public void setOnItemCheckedChangeListener(OnItemCheckedChangeListener onItemCheckedChangeListener) {
+        this.mOnItemCheckedChangeListener = onItemCheckedChangeListener;
     }
 
     /**
@@ -112,6 +121,50 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
             }else{
                 view.setOnClickListener(null);
             }
+        }
+        return this;
+    }
+
+    public BaseViewHolder setCheckable(@IdRes int id, boolean checkable){
+        final View view = find(id);
+        if (view == null){
+            return this;
+        }
+        if (!checkable){
+            if (view instanceof CompoundButton){
+                ((CompoundButton) view).setOnCheckedChangeListener(null);
+            }else if (view instanceof CheckedTextView){
+                view.setOnClickListener(null);
+            }
+            return this;
+        }
+        if (view instanceof CompoundButton){
+            /*((CompoundButton) view).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (mOnItemCheckedChangeListener != null){
+                        mOnItemCheckedChangeListener.onItemCheck(view,isChecked,getAdapterPosition());
+                    }
+                }
+            });*/
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemCheckedChangeListener != null){
+                        mOnItemCheckedChangeListener.onItemCheck(view,((CompoundButton) view).isChecked(),getAdapterPosition());
+                    }
+                }
+            });
+        }else if (view instanceof CheckedTextView){
+            final CheckedTextView textView = (CheckedTextView) view;
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemCheckedChangeListener != null){
+                        mOnItemCheckedChangeListener.onItemCheck(view,textView.isChecked(),getAdapterPosition());
+                    }
+                }
+            });
         }
         return this;
     }
@@ -165,6 +218,19 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView = find(imageId);
         if (imageView != null && callback != null){
             callback.callback(imageView);
+        }
+        return this;
+    }
+
+    public BaseViewHolder setChecked(@IdRes int viewId,boolean checked){
+        View view = find(viewId);
+        if (view == null){
+            return this;
+        }
+        if (view instanceof Checkable){
+            if (((Checkable) view).isChecked() != checked){
+                ((Checkable) view).setChecked(checked);
+            }
         }
         return this;
     }

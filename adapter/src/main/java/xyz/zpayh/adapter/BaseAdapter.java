@@ -578,7 +578,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     protected void bindError(BaseViewHolder holder){}
 
 
-    private void bindData(BaseViewHolder baseViewHolder, int layoutRes) {
+    protected void bindData(BaseViewHolder baseViewHolder, int layoutRes) {
         baseViewHolder.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(@NonNull View view, int adapterPosition) {
