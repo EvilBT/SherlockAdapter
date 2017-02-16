@@ -89,7 +89,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
-    public void setData(@Nullable List<IMultiItem> data){
+    public void setData(@Nullable List<? extends IMultiItem> data){
         mData.clear();
         if (data != null){
             mData.addAll(data);
@@ -130,7 +130,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
      * 添加新数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
-    public void addData(List<IMultiItem> data){
+    public void addData(List<? extends IMultiItem> data){
         if (data == null){
             return;
         }
@@ -157,7 +157,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         }
     }
 
-    private int findData(List<IMultiItem> list, IMultiItem data) {
+    private int findData(List<? extends IMultiItem> list, IMultiItem data) {
 
         int showSubSize = 0;
         for (int i = 0; i < list.size(); i++) {
@@ -203,7 +203,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     }
 
-    private int removeData(List<IMultiItem> list, int index){
+    private int removeData(List<? extends IMultiItem> list, int index){
         for (IMultiItem item : list) {
             if (index == 0){
                 int removeSize = 1;
@@ -470,7 +470,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         return getShowSize(mData);
     }
 
-    private int getShowSize(List<IMultiItem> data) {
+    private int getShowSize(List<? extends IMultiItem> data) {
         if (data == null || data.isEmpty()){
             return 0;
         }
@@ -484,7 +484,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         return size;
     }
 
-    private IMultiItem getData(List<IMultiItem> list, int index){
+    private IMultiItem getData(List<? extends IMultiItem> list, int index){
 
         for (IMultiItem item : list) {
             if (index == 0){

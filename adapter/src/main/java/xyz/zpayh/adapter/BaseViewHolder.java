@@ -124,9 +124,9 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         View view = find(id);
         if (view != null){
             if (longClickable){
-                view.setOnClickListener(mOnClickListener);
+                view.setOnLongClickListener(mOnLongClickListener);
             }else{
-                view.setOnClickListener(null);
+                view.setOnLongClickListener(null);
             }
         }
         return this;

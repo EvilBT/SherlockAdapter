@@ -30,7 +30,7 @@ public class Text implements IMultiItem{
 
     @Override
     public void convert(BaseViewHolder holder) {
-
+        holder.setText(R.id.text,mText);
     }
 
     @Override
