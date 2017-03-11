@@ -38,7 +38,7 @@ allprojects {
 **Step 2.** Add the dependency
 ``` gradle
 dependencies {
-    compile 'com.github.EvilBT:SherlockAdapter:v1.0.3'
+    compile 'com.github.EvilBT:SherlockAdapter:v1.0.4'
 }
 ```
 

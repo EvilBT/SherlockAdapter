@@ -86,7 +86,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
-    public void setData(@Nullable List<T> data){
+    public void setData(@Nullable List<? extends T> data){
         mData.clear();
         if (data != null){
             mData.addAll(data);
@@ -123,7 +123,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * 添加新数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
-    public void addData(List<T> data){
+    public void addData(List<? extends T> data){
         if (data == null){
             return;
         }
