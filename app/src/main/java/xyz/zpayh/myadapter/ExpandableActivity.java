@@ -81,7 +81,7 @@ public class ExpandableActivity extends AppCompatActivity {
                     if (item instanceof IExpandable){
                         IExpandable expandable = (IExpandable) item;
                         if (expandable.isExpandable()){
-                            adapter.collapse(adapterPosition);
+                            adapter.collapseAll(adapterPosition);
                         }else{
                             adapter.expandAll(adapterPosition);
                         }

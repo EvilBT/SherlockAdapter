@@ -15,6 +15,7 @@ public interface IExpandable extends IMultiItem{
 
     /**
      * 用来判断区分是否展开
+     * @return true 表示是展开状态， false 表示是关闭状态
      */
     boolean isExpandable();
 

@@ -829,6 +829,19 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         }
     }
 
+    private void collapseAll(List<IMultiItem> list){
+        if (list == null || list.isEmpty()) return;
+        for (IMultiItem item : list) {
+            if (item instanceof IExpandable){
+                final IExpandable expandable = (IExpandable) item;
+                if (expandable.isExpandable()) {
+                    ((IExpandable) item).setExpandable(false);
+                    collapseAll(((IExpandable) item).getSubItems());
+                }
+            }
+        }
+    }
+
     public void collapse(int adapterPosition){
         final IMultiItem data = getData(adapterPosition);
         if (!(data instanceof IExpandable)){
@@ -840,6 +853,28 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         if (expandable.isExpandable()){
             expandable.setExpandable(false);
             int removeSize = getShowSize(expandable.getSubItems());
+            notifyItemChanged(adapterPosition);
+            if (removeSize != 0){
+                notifyItemRangeRemoved(adapterPosition+1,removeSize);
+            }
+        }
+    }
+
+    /**
+     * 关闭全部下级菜单
+     */
+    public void collapseAll(int adapterPosition){
+        final IMultiItem data = getData(adapterPosition);
+        if (!(data instanceof IExpandable)){
+            return;
+        }
+
+        final IExpandable expandable = (IExpandable) data;
+
+        if (expandable.isExpandable()){
+            expandable.setExpandable(false);
+            int removeSize = getShowSize(expandable.getSubItems());
+            collapseAll(expandable.getSubItems());
             notifyItemChanged(adapterPosition);
             if (removeSize != 0){
                 notifyItemRangeRemoved(adapterPosition+1,removeSize);
