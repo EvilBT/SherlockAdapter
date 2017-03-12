@@ -1,8 +1,10 @@
 # SherlockAdapter
+[![License](https://img.shields.io/badge/license-Apache%202-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[ ![Download](https://api.bintray.com/packages/sherlock/maven/sherlockadapter/images/download.svg) ](https://bintray.com/sherlock/maven/sherlockadapter/_latestVersion)
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 ## 新增功能
-
+- 2017-03-12 添加关闭子展开项上的所有已经可见的子项，即关闭当前展开项所有子项
 - 2017-01-22 新添加支持多选item,可实现例如选择多张图片的功能
 
 一个封装了RecyclerView.Adapter一些常用功能的库。
@@ -24,21 +26,10 @@
 先说注意事项，一般来讲，由于SherlockAdapter采用LayoutRes的值来作为ItemViewType返回，而ItemViewType是用来区分不同的Item的，所以如果不是同种Item，就不要使用同一个Layout文件，例如头部HeadLayout跟ItemLayout的布局是一样的情况下，就复制多一个Layout出来就行，不要共用一个Layout。
 
 ## 开始配置
-**Step 1.** Add the JitPack repository to your build file
-
-Add it in your root build.gradle at the end of repositories:
-``` gradle
-allprojects {
-	repositories {
-		...
-		maven { url "https://jitpack.io" }
-	}
-}
-```
-**Step 2.** Add the dependency
+**Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    compile 'com.github.EvilBT:SherlockAdapter:v1.0.4'
+    compile 'xyz.zpayh:sherlockadapter:1.0.5'
 }
 ```
 

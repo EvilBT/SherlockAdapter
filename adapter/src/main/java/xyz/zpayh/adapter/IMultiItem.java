@@ -32,7 +32,7 @@ public interface IMultiItem {
     /**
      * 在布局为{@link android.support.v7.widget.GridLayoutManager}时才有用处，
      * 返回当前布局所占用的SpanSize
-     * @return 如果返回的SpanSize <= 0 或者 > {@link GridLayoutManager#getSpanCount()}
+     * @return 如果返回的SpanSize 小于或等于 0 或者 大于 {@link GridLayoutManager#getSpanCount()}
      *  则{@link BaseAdapter} 会在{@link BaseAdapter#onAttachedToRecyclerView(RecyclerView)}
      *  自适应为1或者{@link GridLayoutManager#getSpanCount()},详情参考{@link BaseAdapter#onAttachedToRecyclerView(RecyclerView)}
      */

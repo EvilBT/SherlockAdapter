@@ -101,6 +101,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      * 中会得到响应事件的回调,详情参考{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}
      * @param id 响应点击事件的View Id
      * @param clickable true响应点击事件，false不响应点击事件
+     * @return 返回this
      */
     public BaseViewHolder setClickable(@IdRes int id, boolean clickable){
         View view = find(id);
@@ -119,6 +120,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      * 中会得到响应事件的回调,详情参考{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}
      * @param id 响应点击事件的View Id
      * @param longClickable true响应长按事件，false不响应长按事件
+     * @return 返回this
      */
     public BaseViewHolder setLongClickable(@IdRes int id, boolean longClickable){
         View view = find(id);
@@ -134,9 +136,9 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     /**
      *
-     * @param id
-     * @param checkable
-     * @return
+     * @param id 实现了 {@link Checkable} 接口的View ID
+     * @param checkable 设置是否监听勾选事件
+     * @return 返回this
      */
     public BaseViewHolder setCheckable(@IdRes int id, boolean checkable){
         final View view = find(id);
@@ -208,6 +210,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    /**
+     * 设置View的勾选状态
+     * @param viewId 已经实现了{@link Checkable}接口的View Id
+     * @param checked 设置勾选状态
+     * @return 返回this
+     */
     public BaseViewHolder setChecked(@IdRes int viewId,boolean checked){
         View view = find(viewId);
         if (view == null){
@@ -240,6 +248,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
      * 设置View的visibility状态
      * @param id View id
      * @param visibility 可以设置为{@link View#GONE},{@link View#VISIBLE}或者{@link View#INVISIBLE}
+     * @return 返回this
      */
     public BaseViewHolder setVisibility(@IdRes int id, int visibility){
         View view = find(id);

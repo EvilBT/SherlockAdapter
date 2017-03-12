@@ -650,6 +650,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 如果设置了自定义Empty布局，且想对其设置一些数据显示处理，可以重写此方法
+     * @param holder 默认的ViewHolder
      */
     public void convertEmpty(BaseViewHolder holder){
 
@@ -657,6 +658,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 如果设置了自定义Error布局，且想对其设置一些数据显示处理，可以重写此方法
+     * @param holder 默认的ViewHolder
      */
     public void convertError(BaseViewHolder holder){
 
@@ -664,6 +666,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 默认加载更多的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     private void bindLoadMore(BaseViewHolder holder){
         holder.setOnItemClickListener(new OnItemClickListener() {
@@ -680,11 +683,13 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 默认空布局的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     protected void bindEmpty(BaseViewHolder holder){}
 
     /**
      * 默认异常布局的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     protected void bindError(BaseViewHolder holder){}
 
@@ -774,11 +779,14 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 开启子view的点击事件，或者其他监听
+     * @param holder 默认的ViewHolder
+     * @param layoutRes 对应的布局Layout ID，也代表为ViewType
      */
     public abstract void bind(BaseViewHolder holder,int layoutRes);
 
     /**
      * 展开下级菜单
+     * @param adapterPosition 想展开下级菜单的父菜单位置
      */
     public void expand(int adapterPosition){
         final IMultiItem data = getData(adapterPosition);
@@ -796,6 +804,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     /**
      * 展开全部下级菜单
+     * @param adapterPosition 想展开下级菜单的父菜单位置
      */
     public void expandAll(int adapterPosition){
         final IMultiItem data = getData(adapterPosition);
@@ -842,6 +851,10 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         }
     }
 
+    /**
+     * 关闭下级菜单
+     * @param adapterPosition 想关闭下级菜单的父菜单位置
+     */
     public void collapse(int adapterPosition){
         final IMultiItem data = getData(adapterPosition);
         if (!(data instanceof IExpandable)){
@@ -861,7 +874,8 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     }
 
     /**
-     * 关闭全部下级菜单
+     * 关闭下级菜单树下的所有菜单
+     * @param adapterPosition 想关闭下级菜单的父菜单位置
      */
     public void collapseAll(int adapterPosition){
         final IMultiItem data = getData(adapterPosition);

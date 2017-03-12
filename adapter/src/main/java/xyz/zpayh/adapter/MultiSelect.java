@@ -26,11 +26,13 @@ public interface MultiSelect {
 
     /**
      * 设置监听
+     * @param onCheckedChangeListener 监听器，可以为空
      */
     void setOnItemCheckedChangeListener(OnItemCheckedChangeListener onCheckedChangeListener);
 
     /**
      * 返回全部选择
+     * @return 返回全部已经勾选的子项
      */
     List<IMultiSelectItem> getSelectedItems();
 }

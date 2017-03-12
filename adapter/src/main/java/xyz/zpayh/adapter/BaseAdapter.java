@@ -539,6 +539,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     /**
      * 如果设置了自定义Empty布局，且想对其设置一些数据显示处理，可以重写此方法
+     * @param holder 默认的ViewHolder
      */
     public void convertEmpty(BaseViewHolder holder){
 
@@ -546,6 +547,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     /**
      * 如果设置了自定义Error布局，且想对其设置一些数据显示处理，可以重写此方法
+     * @param holder 默认的ViewHolder
      */
     public void convertError(BaseViewHolder holder){
 
@@ -553,6 +555,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     /**
      * 默认加载更多的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     private void bindLoadMore(BaseViewHolder holder){
         holder.setOnItemClickListener(new OnItemClickListener() {
@@ -569,11 +572,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     /**
      * 默认空布局的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     protected void bindEmpty(BaseViewHolder holder){}
 
     /**
      * 默认异常布局的点击事件实现
+     * @param holder 默认的ViewHolder
      */
     protected void bindError(BaseViewHolder holder){}
 
@@ -663,17 +668,25 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     /**
      * 返回布局layout
+     * @param index 列表位置
+     * @return
+     *  布局Layout ID
      */
     @LayoutRes
     public abstract int getLayoutRes(int index);
 
     /**
      * 在这里设置显示
+     * @param holder 默认的ViewHolder
+     * @param data 对应的数据
+     * @param index 对应的列表位置（不一定是数据在数据集合List中的位置）
      */
     public abstract void convert(BaseViewHolder holder, T data, int index);
 
     /**
      * 开启子view的点击事件，或者其他监听
+     * @param holder 默认的ViewHolder
+     * @param layoutRes 对应的布局Layout ID，也代表为ViewType
      */
     public abstract void bind(BaseViewHolder holder,int layoutRes);
 }
