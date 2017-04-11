@@ -8,7 +8,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -22,6 +25,15 @@ import xyz.zpayh.myadapter.data.Text;
 
 public class MultiItemActivity extends AppCompatActivity {
 
+    private RecyclerView mRecyclerView;
+    private MyMultiAdapter mAdapter;
+    private List<IMultiItem> mData;
+
+    private GridLayoutManager mGridLayoutManager;
+    private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
+
+    private boolean mIsGrid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,26 +45,29 @@ public class MultiItemActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mGridLayoutManager = new GridLayoutManager(this,3);
+        mStaggeredGridLayoutManager = new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
+
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
-        final MyMultiAdapter adapter = new MyMultiAdapter();
-        recyclerView.setAdapter(adapter);
+        mRecyclerView = (RecyclerView) findViewById(R.id.list);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+        mIsGrid = true;
+        mAdapter = new MyMultiAdapter();
+        mRecyclerView.setAdapter(mAdapter);
 
-        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        mAdapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(@NonNull View view, final int adapterPosition) {
                 new AlertDialog.Builder(MultiItemActivity.this)
-                        .setTitle("是否删除"+adapterPosition+"项")
-                        .setNegativeButton("是", new DialogInterface.OnClickListener() {
+                        .setTitle("是否删除第"+adapterPosition+"项")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                adapter.removeData(adapterPosition);
+                                mAdapter.removeData(adapterPosition);
                             }
                         })
-                        .setPositiveButton("否", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -63,20 +78,8 @@ public class MultiItemActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-        final List<IMultiItem> data = new ArrayList<>();
-
-        String[] list = getResources().getStringArray(R.array.list);
-        for (int i = 0; i < list.length; i++) {
-            data.add(new Text(list[i],i%3+1));
-        }
-
-        data.add(2,new Image(R.drawable.base_load_failed));
-        data.add(2,new Image(R.drawable.base_empty));
-        data.add(4,new Image(R.drawable.base_error));
-        data.add(7,new Image(R.drawable.base_load_failed));
-
-        adapter.setData(data);
+        mData = new ArrayList<>();
+        initGridData();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -84,12 +87,81 @@ public class MultiItemActivity extends AppCompatActivity {
                 refreshLayout.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        adapter.setData(data);
+                        mAdapter.setData(mData);
                         refreshLayout.setRefreshing(false);
                     }
-                },2000);
+                },500);
             }
         });
     }
 
+    private void initGridData() {
+        mData.clear();
+        String[] list = getResources().getStringArray(R.array.list);
+        for (int i = 0; i < list.length; i++) {
+            mData.add(new Text(list[i],i%3+1));
+        }
+
+        int width = getResources().getDisplayMetrics().widthPixels / mGridLayoutManager.getSpanCount();
+
+        mData.add(2,new Image(R.drawable.girl,width));
+        mData.add(2,new Image(R.drawable.girl,width,2));
+        mData.add(2,new Image(R.drawable.easter_eggs,width,2));
+        mData.add(2,new Image(R.drawable.sunset,width,2));
+        mData.add(4,new Image(R.drawable.adult,width,3));
+        mData.add(7,new Image(R.drawable.sunset,width));
+
+        mAdapter.setData(mData);
+    }
+
+    private void initStaggeredGridData() {
+        mData.clear();
+        String[] list = getResources().getStringArray(R.array.list);
+        for (int i = 0; i < list.length; i++) {
+            mData.add(new Text(list[i],i%3+1));
+        }
+
+        int width = getResources().getDisplayMetrics().widthPixels / mStaggeredGridLayoutManager.getSpanCount();
+
+        mData.add(2,new Image(R.drawable.girl,width));
+        mData.add(2,new Image(R.drawable.girl,width));
+        mData.add(2,new Image(R.drawable.easter_eggs,width));
+        mData.add(2,new Image(R.drawable.adult,width));
+        mData.add(2,new Image(R.drawable.sunset,width));
+        mData.add(2,new Image(R.drawable.easter_eggs,width));
+        mData.add(2,new Image(R.drawable.adult,width));
+        mData.add(7,new Image(R.drawable.sunset,width));
+
+        mAdapter.setData(mData);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_grid:
+                if (mIsGrid){
+                    return true;
+                }
+                mIsGrid = true;
+                mRecyclerView.setLayoutManager(mGridLayoutManager);
+                mAdapter.onAttachedToRecyclerView(mRecyclerView);
+                initGridData();
+                return true;
+            case R.id.action_staggered:
+                if (!mIsGrid){
+                    return true;
+                }
+                mIsGrid = false;
+                mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
+                initStaggeredGridData();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.multiitem_menu, menu);
+        return true;
+    }
 }

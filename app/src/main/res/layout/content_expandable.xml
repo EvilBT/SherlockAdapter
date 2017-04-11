@@ -9,22 +9,6 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="xyz.zpayh.myadapter.ExpandableActivity"
     tools:showIn="@layout/activity_expandable">
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/add"
-            android:text="Add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/sub"
-            android:text="Sub"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh"
         android:layout_width="match_parent"

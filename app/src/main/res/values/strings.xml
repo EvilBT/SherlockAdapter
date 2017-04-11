@@ -7,6 +7,14 @@
     <string name="action_close">关闭加载</string>
     <string name="action_empty">空数据</string>
 
+    <string name="action_use_diff_util">Use DiffUtil</string>
+    <string name="action_not_use_diff_util">Not Use DiffUtil</string>
+
+    <string name="action_use_grid">GridLayoutManager</string>
+    <string name="action_ues_staggered">StaggeredGridLayoutManager</string>
+
+    <string name="github">https://github.com/EvilBT/SherlockAdapter</string>
+
     <string-array name="activity_title">
 
         <item>HeadAndFootActivity</item>
@@ -33,6 +41,8 @@
         <item>Swift</item>
     </string-array>
     <string name="title_activity_multi_item">MultiItemActivity</string>
+    <string name="title_activity_HeadAndFoot">HeadAndFootActivity</string>
+    <string name="title_activity_AutoLoadMore">AutoLoadMoreActivity</string>
     <string name="title_activity_expandable">ExpandableActivity</string>
     <string name="details">详情</string>
     <string name="title_activity_multi_select_item">MultiSelectItemActivity</string>

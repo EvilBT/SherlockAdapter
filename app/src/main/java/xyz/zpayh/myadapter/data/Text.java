@@ -1,6 +1,7 @@
 package xyz.zpayh.myadapter.data;
 
 import xyz.zpayh.adapter.BaseViewHolder;
+import xyz.zpayh.adapter.IFullSpan;
 import xyz.zpayh.adapter.IMultiItem;
 import xyz.zpayh.myadapter.R;
 
@@ -13,7 +14,7 @@ import xyz.zpayh.myadapter.R;
  * 修改备注:
  */
 
-public class Text implements IMultiItem{
+public class Text implements IMultiItem, IFullSpan{
     public String mText;
 
     private int mSpanSize;
@@ -36,5 +37,10 @@ public class Text implements IMultiItem{
     @Override
     public int getSpanSize() {
         return mSpanSize;
+    }
+
+    @Override
+    public boolean isFullSpan() {
+        return true;
     }
 }

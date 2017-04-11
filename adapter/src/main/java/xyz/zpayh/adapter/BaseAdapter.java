@@ -4,6 +4,8 @@ import android.support.annotation.CheckResult;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
+import android.support.v7.util.ListUpdateCallback;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -82,22 +84,101 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     private OnItemLongClickListener mOnItemLongClickListener;
 
+    private DiffUtilCallback<T> mCallback;
+
+    private boolean mDetectMoves = true;
+
     /**
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
      * @param data 数据集合
      */
     public void setData(@Nullable List<? extends T> data){
-        mData.clear();
-        if (data != null){
-            mData.addAll(data);
-        }
+        //mData.clear();
+        //if (data != null){
+        //    mData.addAll(data);
+        //}
 
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
             mIsLoading = false;
         }
         mShowErrorView = false;
-        notifyDataSetChanged();
+
+        if (mCallback == null){
+
+            mData.clear();
+            if (data != null){
+                mData.addAll(data);
+            }
+
+            notifyDataSetChanged();
+            return;
+        }
+
+        final List<T> oldData = new ArrayList<>(mData);
+        mData.clear();
+        if (data != null){
+            mData.addAll(data);
+        }
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldData.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return mData.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                final T oldItem = oldData.get(oldItemPosition);
+                final T newItem = mData.get(newItemPosition);
+                return mCallback.areItemsTheSame(oldItem,newItem);
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                final T oldItem = oldData.get(oldItemPosition);
+                final T newItem = mData.get(newItemPosition);
+                return mCallback.areContentsTheSame(oldItem,newItem);
+            }
+
+            @Nullable
+            @Override
+            public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+                final T oldItem = oldData.get(oldItemPosition);
+                final T newItem = mData.get(newItemPosition);
+                return mCallback.getChangePayload(oldItem,newItem);
+            }
+        },mDetectMoves);
+
+        result.dispatchUpdatesTo(new ListUpdateCallback() {
+            @Override
+            public void onInserted(int position, int count) {
+                int skew = getHeadSize();
+                notifyItemRangeInserted(position + skew, count);
+            }
+
+            @Override
+            public void onRemoved(int position, int count) {
+                int skew = getHeadSize();
+                notifyItemRangeRemoved(position + skew, count);
+            }
+
+            @Override
+            public void onMoved(int fromPosition, int toPosition) {
+                int skew = getHeadSize();
+                notifyItemMoved(fromPosition + skew, toPosition + skew);
+            }
+
+            @Override
+            public void onChanged(int position, int count, Object payload) {
+                int skew = getHeadSize();
+                notifyItemRangeChanged(position + skew, count, payload);
+            }
+        });
     }
 
     /**
@@ -321,6 +402,20 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         return mFootLayouts.length;
     }
 
+    public void setCallback(DiffUtilCallback<T> callback) {
+        mCallback = callback;
+        mDetectMoves = true;
+    }
+
+    public void setCallback(DiffUtilCallback<T> callback, boolean detectMoves){
+        mCallback = callback;
+        mDetectMoves = detectMoves;
+    }
+
+    public DiffUtilCallback<T> getCallback() {
+        return mCallback;
+    }
+
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int layoutRes) {
         BaseViewHolder baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
@@ -428,7 +523,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         if (lp == null || !(lp instanceof StaggeredGridLayoutManager.LayoutParams)) return;
         StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) lp;
 
-        final int position = holder.getLayoutPosition();
+        final int position = holder.getAdapterPosition();
         if (mShowErrorView && position == 0){
             //显示数据异常
             layoutParams.setFullSpan(true);
@@ -447,6 +542,11 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         if (position >= getHeadSize()+mData.size()){
             //显示尾部及加载更多
             layoutParams.setFullSpan(true);
+            return;
+        }
+        T data = getData(holder.getAdapterPosition());
+        if (data instanceof IFullSpan){
+            layoutParams.setFullSpan(((IFullSpan) data).isFullSpan());
         }
     }
 

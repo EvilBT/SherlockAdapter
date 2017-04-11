@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.zpayh.adapter.OnLoadMoreListener;
-import xyz.zpayh.myadapter.adapter.MyAdapter;
+import xyz.zpayh.myadapter.adapter.AutoLoadAdapter;
+import xyz.zpayh.myadapter.data.ImageCard;
 
 public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -20,13 +21,15 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
     public static final int LOAD_FAILED = 1;
     public static final int LOAD_COMPLETED = 2;
 
-    private boolean mShowLoadMore;
-
     private int mState = LOAD_ADD;
 
-    private MyAdapter mAdapter;
+    private AutoLoadAdapter mAdapter;
 
-    private List<String> data;
+    private List<ImageCard> data;
+
+    private String mTitles[] = {"Adult","Easter Eggs","Girl", "Sunset"};
+    private int mImageResId[] = {R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,16 +37,19 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MyAdapter();
+        mAdapter = new AutoLoadAdapter(this);
         recyclerView.setAdapter(mAdapter);
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+
+        mAdapter.addHeadLayout(R.layout.item_head);
+        mAdapter.addFootLayout(R.layout.item_foot2);
 
         // 模拟数据
         data = new ArrayList<>();
 
-        String[] list = getResources().getStringArray(R.array.list);
-        for (String s : list) {
-            data.add(s);
+        for (int i = 0; i < mTitles.length; i++) {
+            ImageCard card = new ImageCard(mImageResId[i],mTitles[i]);
+            data.add(card);
         }
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -56,7 +62,7 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
                         refreshLayout.setRefreshing(false);
                         mAdapter.setData(data);
                     }
-                },1500);
+                },500);
             }
         });
 
@@ -78,7 +84,7 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
                             mAdapter.loadFailed();
                         }
                     }
-                },6500);
+                },800);
             }
         });
 

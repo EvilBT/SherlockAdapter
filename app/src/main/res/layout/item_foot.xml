@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/tv_foot"
         tools:text="这是尾部"
-        style="@style/Base.TextAppearance.AppCompat.Display3"
+        style="@style/Base.TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

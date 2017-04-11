@@ -12,7 +12,7 @@
         android:id="@+id/tv_act_title"
         android:layout_gravity="center"
         tools:text="Hello World"
-        style="@style/Base.TextAppearance.AppCompat.Display1"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
         android:layout_margin="@dimen/fab_margin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
