@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import xyz.zpayh.adapter.DefaultExpandable;
@@ -56,7 +57,6 @@ public class ExpandableActivity extends AppCompatActivity {
     private StaggeredGridLayoutManager mStaggeredGridLayoutManager;
 
     private boolean mIsGrid = false;
-    private boolean mChangeOrder = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,12 +136,7 @@ public class ExpandableActivity extends AppCompatActivity {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (mChangeOrder){
-                    initReverseData();
-                }else{
-                    initData();
-                }
-                mChangeOrder = !mChangeOrder;
+                refreshData();
                 refresh.setRefreshing(false);
             }
         });
@@ -149,12 +144,7 @@ public class ExpandableActivity extends AppCompatActivity {
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mChangeOrder){
-                    initReverseData();
-                }else{
-                    initData();
-                }
-                mChangeOrder = !mChangeOrder;
+                refreshData();
             }
         });
 
@@ -189,6 +179,22 @@ public class ExpandableActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.multiitem_menu, menu);
         return true;
+    }
+
+    private void refreshData(){
+
+        List<IMultiItem> oldData = mAdapter.getData();
+        List<IMultiItem> data = new ArrayList<>();
+        data.addAll(oldData);
+
+        Collections.reverse(data);
+
+        DefaultExpandable expandable = (DefaultExpandable) data.get(1);
+        Collections.reverse(expandable.getSubItems());
+        expandable = (DefaultExpandable) data.get(2);
+        Collections.reverse(expandable.getSubItems());
+
+        mAdapter.setData(data);
     }
 
     private void initReverseData(){

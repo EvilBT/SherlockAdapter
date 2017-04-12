@@ -34,6 +34,49 @@ dependencies {
 }
 ```
 
+## 新增功能使用方法
+添加DiffUtil支持,详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java):
+```java
+
+public class ExpandableActivity extends AppCompatActivity {
+    // ......
+    private void initView() {
+        // ......
+        mAdapter.setCallback(new DiffUtilCallback<IMultiItem>() {
+            @Override
+            public boolean areItemsTheSame(IMultiItem oldItem, IMultiItem newItem) {
+                //判断是否为同一条数据 是就返回true,否则返回false。
+                if (oldItem instanceof ImageLabel && newItem instanceof ImageLabel){
+                    return TextUtils.equals(((ImageLabel) oldItem).getData(),
+                            ((ImageLabel) newItem).getData());
+                }
+                if (oldItem instanceof Card && newItem instanceof Card){
+                    return ((Card) oldItem).getData().mImageResId == ((Card) newItem).getData().mImageResId;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean areContentsTheSame(IMultiItem oldItem, IMultiItem newItem) {
+                //当上面的 areItemsTheSame 返回ture是会进一步调用此方法，进一步确定
+                //同一条数据的内容是否发生变化
+                if (oldItem instanceof ImageLabel && newItem instanceof ImageLabel){
+                    return true;
+                }
+                if (oldItem instanceof Card && newItem instanceof Card){
+                    return TextUtils.equals(((Card) oldItem).getData().mImageTitle,
+                            ((Card) newItem).getData().mImageTitle);
+                }
+                return false;
+            }
+        });
+    }
+}
+```
+效果:
+
+![伸缩子项](https://raw.githubusercontent.com/EvilBT/SherlockAdapter/master/gif/expandable.gif)
+
 ## 使用方法
 
 一般用法，继承BaseAdapter<T>实现三个抽象方法即可：
@@ -122,8 +165,7 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
 没有子项可伸缩，则数据类型实现*IMultiItem*即可，如果子项也有它的子项，则子项也需要实现*IExpandable*，子项的子项数据类型
 实现*IMultiItem*接口。详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java)
 
-![伸缩子项](http://o9qzkbu2x.bkt.clouddn.com/6.jpg?imageMogr2/auto-orient/thumbnail/300x)
-
+![伸缩子项](https://raw.githubusercontent.com/EvilBT/SherlockAdapter/master/gif/expandable.gif)
 ### 多选列表
 继承BaseMultiSelectAdapter，数据类型实现*IMultiSelectItem*接口(可以简单继承[`DefaultMultiSelectItem`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultMultiSelectItem.java))即可，具体可以参考Demo中[`MultiSelectItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiSelectItemActivity.java)的实现方式。
 
