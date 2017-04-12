@@ -104,12 +104,13 @@ public class MultiItemActivity extends AppCompatActivity {
 
         int width = getResources().getDisplayMetrics().widthPixels / mGridLayoutManager.getSpanCount();
 
-        mData.add(2,new Image(R.drawable.girl,width));
         mData.add(2,new Image(R.drawable.girl,width,2));
-        mData.add(2,new Image(R.drawable.easter_eggs,width,2));
-        mData.add(2,new Image(R.drawable.sunset,width,2));
+        mData.add(3,new Image(R.drawable.easter_eggs,width));
         mData.add(4,new Image(R.drawable.adult,width,3));
-        mData.add(7,new Image(R.drawable.sunset,width));
+
+        mData.add(7,new Image(R.drawable.girl,width,3));
+        mData.add(7,new Image(R.drawable.sunset,width,1));
+        mData.add(7,new Image(R.drawable.horses,width,1));
 
         mAdapter.setData(mData);
     }
@@ -124,13 +125,13 @@ public class MultiItemActivity extends AppCompatActivity {
         int width = getResources().getDisplayMetrics().widthPixels / mStaggeredGridLayoutManager.getSpanCount();
 
         mData.add(2,new Image(R.drawable.girl,width));
-        mData.add(2,new Image(R.drawable.girl,width));
+        mData.add(2,new Image(R.drawable.girl1,width));
         mData.add(2,new Image(R.drawable.easter_eggs,width));
         mData.add(2,new Image(R.drawable.adult,width));
         mData.add(2,new Image(R.drawable.sunset,width));
-        mData.add(2,new Image(R.drawable.easter_eggs,width));
-        mData.add(2,new Image(R.drawable.adult,width));
-        mData.add(7,new Image(R.drawable.sunset,width));
+        mData.add(2,new Image(R.drawable.fashion,width));
+        mData.add(2,new Image(R.drawable.notes,width));
+        mData.add(7,new Image(R.drawable.girl2,width));
 
         mAdapter.setData(mData);
     }

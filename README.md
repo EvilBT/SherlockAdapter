@@ -4,6 +4,7 @@
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 ## 新增功能
+- 2017-04-12 添加DiffUtil支持，添加StaggeredGridLayout的混合布局实现
 - 2017-03-12 添加关闭子展开项上的所有已经可见的子项，即关闭当前展开项所有子项
 - 2017-01-22 新添加支持多选item,可实现例如选择多张图片的功能
 
@@ -29,7 +30,7 @@
 **Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    compile 'xyz.zpayh:sherlockadapter:1.0.5'
+    compile 'xyz.zpayh:sherlockadapter:1.0.6'
 }
 ```
 
@@ -68,11 +69,11 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
 
     @Override
     public void convertHead(BaseViewHolder holder, @LayoutRes int headLayout, int index) {
-        holder.setText(R.id.tv_head,"这是头部"+(index+1));
+        holder.setText(R.id.tv_head,"This is Head Layout");
     }
 }
 ```
-![添加头部](http://o9qzkbu2x.bkt.clouddn.com/8.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![添加头部](http://o9qzkbu2x.bkt.clouddn.com/head.png?imageMogr2/auto-orient/thumbnail/300x)
 ### 添加尾部FootLayout
 ``` java 
 adapter.addFootLayout(R.layout.item_foot);
@@ -82,13 +83,13 @@ adapter.addFootLayout(R.layout.item_foot);
 public class HeadAndFootAdapter extends BaseAdapter<String> {
     @Override
     public void convertFoot(BaseViewHolder holder, @LayoutRes int footLayout, int index) {
-        holder.setText(R.id.tv_foot,"这是尾部"+(index+1));
+        holder.setText(R.id.tv_foot,"This is Foot Layout");
     }
 }
 ```
 具体参考[`HeadAndFootActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/HeadAndFootActivity.java)
 
-![添加尾部](http://o9qzkbu2x.bkt.clouddn.com/7.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![添加尾部](http://o9qzkbu2x.bkt.clouddn.com/foot.png?imageMogr2/auto-orient/thumbnail/300x)
 ### 设置点击事件
 在`bind(BaseViewHolder holder,int layoutRes)`里调用`holder.setClickable(ID,true);`启用item的子view的点击事件，并设置一下`BaseAdapter.setOnItemClickListener()`就可以了，详情参考[`MainActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MainActivity.java)里的Adapter。如果只设置了点击事件，没有启用子view的点击，则是itemView响应消息。
 ### 设置长按事件
@@ -105,15 +106,17 @@ public class HeadAndFootAdapter extends BaseAdapter<String> {
             }
         });
 ``` 
-![正在自动加载](http://o9qzkbu2x.bkt.clouddn.com/4.jpg?imageMogr2/auto-orient/thumbnail/300x)
-![完成加载](http://o9qzkbu2x.bkt.clouddn.com/1.jpg?imageMogr2/auto-orient/thumbnail/300x)
-![加载失败](http://o9qzkbu2x.bkt.clouddn.com/3.jpg?imageMogr2/auto-orient/thumbnail/300x)
-![没有数据](http://o9qzkbu2x.bkt.clouddn.com/2.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![正在自动加载](http://o9qzkbu2x.bkt.clouddn.com/loading.png?imageMogr2/auto-orient/thumbnail/300x)
+![完成加载](http://o9qzkbu2x.bkt.clouddn.com/nomore.png?imageMogr2/auto-orient/thumbnail/300x)
+![加载失败](http://o9qzkbu2x.bkt.clouddn.com/loadfaild.png?imageMogr2/auto-orient/thumbnail/300x)
+![没有数据](http://o9qzkbu2x.bkt.clouddn.com/empty.png?imageMogr2/auto-orient/thumbnail/300x)
 ### 支持多布局
-继承*BaseMultiAdapter*抽象类，数据类型实现*IMultiItem*接口(可以简单继承[`DefaultMultiItem`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultMultiItem.java))即可。
+如果布局管理器是*GridLayoutManager*，则简单继承*BaseMultiAdapter*抽象类，数据类型实现[`IMultiItem`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/IMultiItem.java)接口(可以简单继承[`DefaultMultiItem`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultMultiItem.java))即可。如果是*StaggeredGridLayoutManager*，则需要再实现[`IFullSpan`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/IFullSpan.java)接口，
 具体参考Demo中的[`MultiItemActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/MultiItemActivity.java)
 
-![多布局](http://o9qzkbu2x.bkt.clouddn.com/5.jpg?imageMogr2/auto-orient/thumbnail/300x)
+![GridLayoutManager多布局](http://o9qzkbu2x.bkt.clouddn.com/mgrid.png?imageMogr2/auto-orient/thumbnail/300x)
+![StaggeredGridLayoutManager多布局](http://o9qzkbu2x.bkt.clouddn.com/ms.png?imageMogr2/auto-orient/thumbnail/300x)
+![切换布局管理器](http://o9qzkbu2x.bkt.clouddn.com/chose.png?imageMogr2/auto-orient/thumbnail/300x)
 ### 支持伸缩子项
 继承BaseExpandableAdapter，如果有可子项需要伸缩，数据类型实现*IExpandable*(可以简单继承[`DefaultExpandable`](https://github.com/EvilBT/SherlockAdapter/blob/master/adapter/src/main/java/xyz/zpayh/adapter/DefaultExpandable.java))，子项数据类型实现*IMultiItem*，如果
 没有子项可伸缩，则数据类型实现*IMultiItem*即可，如果子项也有它的子项，则子项也需要实现*IExpandable*，子项的子项数据类型
