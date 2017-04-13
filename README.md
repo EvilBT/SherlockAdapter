@@ -50,7 +50,8 @@ public class AutoLoadMoreActivity extends AppCompatActivity {
     }
 }
 ```
-添加DiffUtil支持,详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java):
+### 添加DiffUtil支持
+具体代码如下，详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java):
 ```java
 
 public class ExpandableActivity extends AppCompatActivity {
