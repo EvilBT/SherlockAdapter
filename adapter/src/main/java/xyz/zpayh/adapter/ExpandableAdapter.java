@@ -55,6 +55,16 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     private int mFootLayouts[] = new int[0];
 
     /**
+     * 是否在数据异常或者没有数据的时候依旧显示头部，默认为false
+     */
+    private boolean mAlwaysShowHead = false;
+
+    /**
+     * 是否在数据异常或者没有数据的时候依旧显示尾部，默认为false
+     */
+    private boolean mAlwaysShowFoot = false;
+
+    /**
      * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
      */
     @LayoutRes
@@ -267,19 +277,6 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         return -1;
     }
 
-    // -1 表示没有这个data，-2表示移除了没有展开的data
-    /*private int removeData(@NonNull List<IMultiItem> list,@NonNull IMultiItem data, boolean add, int offset){
-
-        int size = 0;
-
-        for (int i = 0; i < list.size(); i++) {
-            final IMultiItem item = list.get(i);
-            if (item == data){
-                list.remove(data);
-            }
-        }
-    }*/
-
     public void removeData(int adapterPosition){
         int index = adapterPosition - getHeadSize();
         if (index < 0 || index >= getDataSize()){
@@ -404,6 +401,64 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     }
 
     /**
+     * 设置当显示Empty布局或者Error布局时是否也显示头部布局
+     * @param alwaysShowHead
+     * true 显示头部布局
+     * false 不显示头部布局
+     */
+    public void setAlwaysShowHead(boolean alwaysShowHead) {
+        if (mAlwaysShowHead == alwaysShowHead){
+            return;
+        }
+        mAlwaysShowHead = alwaysShowHead;
+        if (hasHead() && (mShowErrorView || mData.isEmpty())){
+            if (mAlwaysShowHead) {
+                notifyItemRangeInserted(0, getHeadSize());
+            }else{
+                notifyItemRangeRemoved(0, getHeadSize());
+            }
+        }
+    }
+
+    /**
+     * 是否总是显示头部
+     * @return 当显示Empty布局或者Error布局时是否也显示头部布局返回true,否则返回false
+     */
+    public boolean isAlwaysShowHead() {
+        return mAlwaysShowHead;
+    }
+
+    /**
+     * 设置当显示Empty布局或者Error布局时是否也显示尾部布局
+     * @param alwaysShowFoot
+     * true 显示尾部布局
+     * false 不显示尾部布局
+     */
+    public void setAlwaysShowFoot(boolean alwaysShowFoot) {
+        if (mAlwaysShowFoot == alwaysShowFoot){
+            return;
+        }
+        mAlwaysShowFoot = alwaysShowFoot;
+        if (hasFoot()  && (mShowErrorView || mData.isEmpty()) ){
+            // 拿到新的显示长度
+            int itemCount = getItemCount();
+            if (mAlwaysShowFoot){
+                notifyItemRangeInserted(itemCount - getFootSize(),getFootSize());
+            }else{
+                notifyItemRangeRemoved(itemCount,getFootSize());
+            }
+        }
+    }
+
+    /**
+     * 是否总是显示尾部
+     * @return 当显示Empty布局或者Error布局时是否也显示尾部布局返回true,否则返回false
+     */
+    public boolean isAlwaysShowFoot() {
+        return mAlwaysShowFoot;
+    }
+
+    /**
      * 按调用顺序添加头部布局
      * @param headLayout 布局id
      */
@@ -516,12 +571,52 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     @Override
     public final void onBindViewHolder(BaseViewHolder holder, int position) {
 
-        if (mShowErrorView && position == 0){
+        if (mShowErrorView){
+            int index = position;
+            if (mAlwaysShowHead){
+                if (index < getHeadSize()){
+                    //头部布局
+                    convertHead(holder,mHeadLayouts[index],index);
+                    return;
+                }
+                index = position - getHeadSize();
+            }
+            if (index == 0) {
+                convertError(holder);
+                return;
+            }
+            index = index - 1;
+            if (index < getFootSize()){
+                //尾部布局
+                convertFoot(holder,mFootLayouts[index],index);
+                return;
+            }
+
             convertError(holder);
             return;
         }
-        //没有数据时只显示空数据布局
-        if (mData.isEmpty() && position == 0){
+        //没有数据时显示空数据布局
+        if (mData.isEmpty()){
+            int index = position;
+            if (mAlwaysShowHead){
+                if (index < getHeadSize()){
+                    //头部布局
+                    convertHead(holder,mHeadLayouts[index],index);
+                    return;
+                }
+                index = position - getHeadSize();
+            }
+            if (index == 0) {
+                convertEmpty(holder);
+                return;
+            }
+            index = index - 1;
+            if (index < getFootSize()){
+                //尾部布局
+                convertFoot(holder,mFootLayouts[index],index);
+                return;
+            }
+
             convertEmpty(holder);
             return;
         }
@@ -558,13 +653,28 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     @Override
     public final int getItemCount() {
+        int itemCount = 0;
         if (mShowErrorView){
-            //显示加载错误时不显示其他
-            return 1;
+            //显示加载错误时根据设置显示头部或者尾部
+            itemCount = 1;
+            if (mAlwaysShowHead){
+                itemCount += getHeadSize();
+            }
+            if (mAlwaysShowFoot){
+                itemCount += getFootSize();
+            }
+            return itemCount;
         }
         if (mData.isEmpty()){
-            //没有数据时只显示空布局
-            return 1;
+            //没有数据时只显示空布局或者根据设置显示头部和尾部
+            itemCount = 1;
+            if (mAlwaysShowHead){
+                itemCount += getHeadSize();
+            }
+            if (mAlwaysShowFoot){
+                itemCount += getFootSize();
+            }
+            return itemCount;
         }
         final int loadMoreCount = canAutoLoadMore()?1:0;
         return getHeadSize() + getDataSize() + getFootSize()+loadMoreCount;
@@ -612,10 +722,50 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     @Override
     public int getItemViewType(int position) {
         if (mShowErrorView){
+
+            int index = position;
+            if (mAlwaysShowHead){
+                if (index < getHeadSize()){
+                    return mHeadLayouts[index];
+                }
+                index = position - getHeadSize();
+            }
+
+            if (index == 0){
+                return mErrorLayout;
+            }
+
+            index = index -1;
+            if (mAlwaysShowFoot){
+                if (index < getFootSize()){
+                    return mFootLayouts[index];
+                }
+            }
+
             return mErrorLayout;
         }
 
         if (mData.isEmpty()){
+
+            int index = position;
+            if (mAlwaysShowHead){
+                if (index < getHeadSize()){
+                    return mHeadLayouts[index];
+                }
+                index = position - getHeadSize();
+            }
+
+            if (index == 0){
+                return mEmptyLayout;
+            }
+
+            index = index -1;
+            if (mAlwaysShowFoot){
+                if (index < getFootSize()){
+                    return mFootLayouts[index];
+                }
+            }
+
             return mEmptyLayout;
         }
 
@@ -644,13 +794,13 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) lp;
 
         final int position = holder.getLayoutPosition();
-        if (mShowErrorView && position == 0){
-            //显示数据异常
+        if (mShowErrorView){
+            //当数据异常时，所有界面都FullSpan
             layoutParams.setFullSpan(true);
             return;
         }
-        if (mData.isEmpty() && position == 0){
-            //显示空布局
+        if (mData.isEmpty()){
+            //当数据为空时，所有界面都FullSpan
             layoutParams.setFullSpan(true);
             return;
         }
@@ -679,12 +829,12 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (mShowErrorView && position == 0){
-                    //显示数据异常
+                if (mShowErrorView){
+                    //当数据异常时，所有界面都FullSpan
                     return gridLayoutManager.getSpanCount();
                 }
-                if (mData.isEmpty() && position == 0){
-                    //显示空布局
+                if (mData.isEmpty()){
+                    //当数据为空时，所有界面都FullSpan
                     return gridLayoutManager.getSpanCount();
                 }
                 if (position < getHeadSize()){

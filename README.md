@@ -4,6 +4,7 @@
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 ## 新增功能
+- 2017-04-13 添加保持显示头部尾部开关，在显示Error布局或者Empty布局时也能选择显示头部与尾部功能
 - 2017-04-12 添加DiffUtil支持，添加StaggeredGridLayout的混合布局实现
 - 2017-03-12 添加关闭子展开项上的所有已经可见的子项，即关闭当前展开项所有子项
 - 2017-01-22 新添加支持多选item,可实现例如选择多张图片的功能
@@ -30,11 +31,25 @@
 **Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    compile 'xyz.zpayh:sherlockadapter:1.0.6'
+    compile 'xyz.zpayh:sherlockadapter:1.0.7'
 }
 ```
 
 ## 新增功能使用方法
+
+### 添加保持显示头部尾部开关
+通过以下代码控制显示头部尾部开关，详情及效果请参考Demo中的[`AutoLoadMoreActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/AutoLoadMoreActivity.java):
+```java
+public class AutoLoadMoreActivity extends AppCompatActivity {
+    //...
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        //...
+        mAdapter.setAlwaysShowHead(true);
+        mAdapter.setAlwaysShowFoot(true);
+    }
+}
+```
 添加DiffUtil支持,详情参考Demo中的[`ExpandableActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/ExpandableActivity.java):
 ```java
 

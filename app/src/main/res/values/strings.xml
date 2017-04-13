@@ -5,7 +5,11 @@
     <string name="action_completed">完成加载</string>
     <string name="action_failed">加载失败</string>
     <string name="action_close">关闭加载</string>
+    <string name="action_error">异常数据</string>
     <string name="action_empty">空数据</string>
+
+    <string name="always_show_head">总是显示头部</string>
+    <string name="always_show_food">总是显示尾部</string>
 
     <string name="action_use_diff_util">Use DiffUtil</string>
     <string name="action_not_use_diff_util">Not Use DiffUtil</string>

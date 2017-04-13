@@ -78,5 +78,23 @@
             android:layout_height="match_parent"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <CheckBox
+            android:id="@+id/cb_show_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/always_show_head"/>
+
+        <CheckBox
+            android:id="@+id/cb_show_foot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/always_show_food"/>
+    </LinearLayout>
 </RelativeLayout>

@@ -75,6 +75,13 @@ public class ExpandableActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
         mAdapter = new MyExpandableAdapter();
 
+        //mAdapter.setAlwaysShowFoot(true);
+        //mAdapter.setAlwaysShowHead(true);
+
+        mAdapter.addHeadLayout(R.layout.item_head);
+        mAdapter.addFootLayout(R.layout.item_foot2);
+
+        // 设置DiffUtil效果
         mAdapter.setCallback(new DiffUtilCallback<IMultiItem>() {
             @Override
             public boolean areItemsTheSame(IMultiItem oldItem, IMultiItem newItem) {
@@ -193,56 +200,6 @@ public class ExpandableActivity extends AppCompatActivity {
         Collections.reverse(expandable.getSubItems());
         expandable = (DefaultExpandable) data.get(2);
         Collections.reverse(expandable.getSubItems());
-
-        mAdapter.setData(data);
-    }
-
-    private void initReverseData(){
-        int width = getResources().getDisplayMetrics().widthPixels / mStaggeredGridLayoutManager.getSpanCount();
-
-        List<IMultiItem> data = new ArrayList<>();
-
-        // Reverse
-        for (int i = mLabels.length - 1; i >= 0; i--) {
-            ImageLabel label = new ImageLabel(mLabels[i]);
-            data.add(label);
-        }
-
-        // Add animals
-        List<IMultiItem> animalData = new ArrayList<>(2);
-        for (int i = 0; i < mAnimalIds.length; i++) {
-            ImageCard cardData = new ImageCard(mAnimalIds[i],mAnimalTitles[i]);
-            Card card = new Card(width,cardData);
-            animalData.add(card);
-        }
-        ((DefaultExpandable)data.get(3)).addSubData(animalData);
-
-        // Add Reverse beauties
-        List<IMultiItem> beautyData = new ArrayList<>(mBeautyIds.length);
-        for (int i = mBeautyIds.length - 1; i >= 0; i--) {
-            ImageCard cardData = new ImageCard(mBeautyIds[i],mBeautyTitles[i]);
-            Card card = new Card(width,cardData);
-            beautyData.add(card);
-        }
-        ((DefaultExpandable)data.get(2)).addSubData(beautyData);
-
-        // Add scenery
-        List<IMultiItem> sceneryData = new ArrayList<>(mSceneryIds.length);
-        for (int i = 0; i < mSceneryIds.length; i++) {
-            ImageCard cardData = new ImageCard(mSceneryIds[i],mSceneryTitles[i]);
-            Card card = new Card(width,cardData);
-            sceneryData.add(card);
-        }
-        ((DefaultExpandable)data.get(1)).addSubData(sceneryData);
-
-        // Add Reverse tranquil
-        List<IMultiItem> tranquilData = new ArrayList<>(mTranquilIds.length);
-        for (int i = mTranquilIds.length - 1; i >= 0; i--) {
-            ImageCard cardData = new ImageCard(mTranquilIds[i],mTranquilTitles[i]);
-            Card card = new Card(width,cardData);
-            tranquilData.add(card);
-        }
-        ((DefaultExpandable)data.get(0)).addSubData(tranquilData);
 
         mAdapter.setData(data);
     }

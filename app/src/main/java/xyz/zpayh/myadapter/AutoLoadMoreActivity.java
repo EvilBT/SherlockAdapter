@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +33,11 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
     private String mTitles[] = {"Adult","Easter Eggs","Girl", "Sunset"};
     private int mImageResId[] = {R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset};
 
+    private CheckBox mShowHead;
+    private CheckBox mShowFoot;
+
+    private boolean mShowEmpty = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +49,8 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
         recyclerView.setAdapter(mAdapter);
         final SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
+        mAdapter.setAlwaysShowHead(true);
+        mAdapter.setAlwaysShowFoot(true);
         mAdapter.addHeadLayout(R.layout.item_head);
         mAdapter.addFootLayout(R.layout.item_foot2);
 
@@ -93,6 +103,23 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.action_completed).setOnClickListener(this);
         findViewById(R.id.action_empty).setOnClickListener(this);
         findViewById(R.id.action_close).setOnClickListener(this);
+
+        mShowHead = (CheckBox) findViewById(R.id.cb_show_head);
+        mShowFoot = (CheckBox) findViewById(R.id.cb_show_foot);
+        mShowHead.setChecked(true);
+        mShowFoot.setChecked(true);
+        mShowHead.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mAdapter.setAlwaysShowHead(isChecked);
+            }
+        });
+        mShowFoot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mAdapter.setAlwaysShowFoot(isChecked);
+            }
+        });
     }
 
     @Override
@@ -117,8 +144,18 @@ public class AutoLoadMoreActivity extends AppCompatActivity implements View.OnCl
                 mState = LOAD_COMPLETED;
                 break;
             case R.id.action_empty:
-                setTitle("没有数据");
-                mAdapter.setData(null);
+
+                if (mShowEmpty) {
+                    setTitle("没有数据");
+                    mAdapter.setData(null);
+                    mShowEmpty = false;
+                    ((TextView)v).setText(R.string.action_error);
+                }else{
+                    setTitle("数据异常");
+                    mAdapter.showErrorView();
+                    mShowEmpty = true;
+                    ((TextView)v).setText(R.string.action_empty);
+                }
                 break;
             case R.id.action_close:
                 mAdapter.openAutoLoadMore(false);
