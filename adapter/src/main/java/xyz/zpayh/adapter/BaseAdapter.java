@@ -47,9 +47,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     protected final List<T> mData = new ArrayList<>();
 
-    private int mHeadLayouts[] = new int[0];
+    private int mHeadLayoutAndSpanStates[] = new int[0];
 
-    private int mFootLayouts[] = new int[0];
+    private int mFootLayoutAndSpanStates[] = new int[0];
 
     /**
      * 是否在数据异常或者没有数据的时候依旧显示头部，默认为false
@@ -270,14 +270,18 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             return;
         }
 
-        for (int i = adapterPosition; i < mHeadLayouts.length-1; i++) {
-            mHeadLayouts[i] = mHeadLayouts[i+1];
-            if (mHeadLayouts[i+1] == 0){
+        for (int i = adapterPosition; i < mHeadLayoutAndSpanStates.length/3-1; i++) {
+            mHeadLayoutAndSpanStates[i*3] = mHeadLayoutAndSpanStates[(i+1)*3];
+            mHeadLayoutAndSpanStates[i*3+1] = mHeadLayoutAndSpanStates[(i+1)*3+1];
+            mHeadLayoutAndSpanStates[i*3+2] = mHeadLayoutAndSpanStates[(i+1)*3+2];
+            if (mHeadLayoutAndSpanStates[(i+1)*3] == 0){
                 return;
             }
         }
 
-        mHeadLayouts[mHeadLayouts.length-1] = 0;
+        mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-1] = 0;
+        mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-2] = 0;
+        mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-3] = 0;
         notifyItemRemoved(adapterPosition);
     }
 
@@ -287,35 +291,43 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             return;
         }
 
-        for (int i = index; i < mFootLayouts.length-1; i++) {
-            mFootLayouts[i] = mFootLayouts[i+1];
-            if (mFootLayouts[i+1] == 0){
+        for (int i = index; i < mFootLayoutAndSpanStates.length/3-1; i++) {
+            mFootLayoutAndSpanStates[i*3] = mFootLayoutAndSpanStates[(i+1)*3];
+            mFootLayoutAndSpanStates[i*3+1] = mFootLayoutAndSpanStates[(i+1)*3+1];
+            mFootLayoutAndSpanStates[i*3+2] = mFootLayoutAndSpanStates[(i+1)*3+2];
+            if (mFootLayoutAndSpanStates[(i+1)*3] == 0){
                 return;
             }
         }
 
-        mFootLayouts[mFootLayouts.length-1] = 0;
+        mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-1] = 0;
+        mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-2] = 0;
+        mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-3] = 0;
         notifyItemRemoved(adapterPosition);
     }
 
     public void removeAllHead(){
         int size = getHeadSize();
-        for (int i = 0; i < mHeadLayouts.length; i++) {
-            if(mHeadLayouts[i] == 0){
+        for (int i = 0; i < mHeadLayoutAndSpanStates.length/3; i++) {
+            if(mHeadLayoutAndSpanStates[i*3] == 0){
                 break;
             }
-            mHeadLayouts[i] = 0;
+            mHeadLayoutAndSpanStates[i*3] = 0;
+            mHeadLayoutAndSpanStates[i*3+1] = 0;
+            mHeadLayoutAndSpanStates[i*3+2] = 0;
         }
         notifyItemRangeRemoved(0,size);
     }
 
     public void removeAllFoot(){
         int size = getFootSize();
-        for (int i = 0; i < mFootLayouts.length; i++) {
-            if (mFootLayouts[i] == 0){
+        for (int i = 0; i < mFootLayoutAndSpanStates.length/3; i++) {
+            if (mFootLayoutAndSpanStates[i*3] == 0){
                 break;
             }
-            mFootLayouts[i] = 0;
+            mFootLayoutAndSpanStates[i*3] = 0;
+            mFootLayoutAndSpanStates[i*3+1] = 0;
+            mFootLayoutAndSpanStates[i*3+2] = 0;
         }
         notifyItemRangeRemoved(getHeadSize()+mData.size(),size);
     }
@@ -411,26 +423,53 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * @param headLayout 布局id
      */
     public void addHeadLayout(@LayoutRes int headLayout) {
+        addHeadLayout(headLayout,true);
+    }
+
+    /**
+     * 按调用顺序添加头部布局
+     * @param headLayout 布局id
+     * @param fullSpan 是否横跨布局,在{@link GridLayoutManager}布局的时候只有
+     *                 Layout的spanSize 小于或等于 0的时候生效
+     *                 true 为横跨布局，false为1
+     */
+    public void addHeadLayout(@LayoutRes int headLayout, boolean fullSpan) {
+        addHeadLayout(headLayout, fullSpan,0);
+    }
+
+    /**
+     * 按调用顺序添加头部布局
+     * @param headLayout 布局id
+     * @param fullSpan 是否横跨布局,在{@link GridLayoutManager}布局的时候只有
+     *                 Layout的spanSize 小于或等于 0的时候生效
+     *                 true 为横跨布局，false为1
+     * @param spanSize 在{@link GridLayoutManager}布局的时候生效，如果小于或等于0，则根据fullSpan的值设置
+     *                 spanSize的大小.
+     *                 true 为横跨布局，false为1
+     */
+    public void addHeadLayout(@LayoutRes int headLayout, boolean fullSpan, int spanSize) {
 
         int indexToAdd = -1;
 
-        for (int i = 0; i < mHeadLayouts.length; i++) {
-            if (mHeadLayouts[i] == 0){
+        for (int i = 0; i < mHeadLayoutAndSpanStates.length; i+=3) {
+            if (mHeadLayoutAndSpanStates[i] == 0){
                 indexToAdd = i;
                 break;
             }
         }
 
         if (indexToAdd == -1){
-            indexToAdd = mHeadLayouts.length;
-            mHeadLayouts = Arrays.copyOf(mHeadLayouts,
-                    indexToAdd < 2 ? 2 : indexToAdd * 2);
-            for (int i = indexToAdd; i < mHeadLayouts.length; i++) {
-                mHeadLayouts[i] = 0;
+            indexToAdd = mHeadLayoutAndSpanStates.length;
+            mHeadLayoutAndSpanStates = Arrays.copyOf(mHeadLayoutAndSpanStates,
+                    indexToAdd < 3 ? 3 : indexToAdd * 3);
+            for (int i = indexToAdd; i < mHeadLayoutAndSpanStates.length; i++) {
+                mHeadLayoutAndSpanStates[i] = 0;
             }
         }
 
-        mHeadLayouts[indexToAdd] = headLayout;
+        mHeadLayoutAndSpanStates[indexToAdd] = headLayout;
+        mHeadLayoutAndSpanStates[indexToAdd+1] = fullSpan ? 1 : 0;
+        mHeadLayoutAndSpanStates[indexToAdd+2] = spanSize;
     }
 
     public boolean hasHead(){
@@ -438,12 +477,12 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     }
 
     public int getHeadSize(){
-        for (int i = 0; i < mHeadLayouts.length; i++) {
-            if (mHeadLayouts[i] == 0){
+        for (int i = 0; i < mHeadLayoutAndSpanStates.length/3; i++) {
+            if (mHeadLayoutAndSpanStates[i*3] == 0){
                 return i;
             }
         }
-        return mHeadLayouts.length;
+        return mHeadLayoutAndSpanStates.length/3;
     }
 
     /**
@@ -451,25 +490,52 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * @param footLayout 布局id
      */
     public void addFootLayout(@LayoutRes int footLayout){
+        addFootLayout(footLayout,true);
+    }
+
+    /**
+     * 按调用顺序添加尾部布局
+     * @param footLayout 布局id
+     * @param fullSpan 是否横跨布局,在{@link GridLayoutManager}布局的时候只有
+     *                 Layout的spanSize 小于或等于 0的时候生效
+     *                 true 为横跨布局，false为1
+     */
+    public void addFootLayout(@LayoutRes int footLayout,boolean fullSpan){
+        addFootLayout(footLayout, fullSpan,0);
+    }
+
+    /**
+     * 按调用顺序添加尾部布局
+     * @param footLayout 布局id
+     * @param fullSpan 是否横跨布局,在{@link GridLayoutManager}布局的时候只有
+     *                 Layout的spanSize 小于或等于 0的时候生效
+     *                 true 为横跨布局，false为1
+     * @param spanSize 在{@link GridLayoutManager}布局的时候生效，如果小于或等于0，则根据fullSpan的值设置
+     *                 spanSize的大小.
+     *                 true 为横跨布局，false为1
+     */
+    public void addFootLayout(@LayoutRes int footLayout,boolean fullSpan, int spanSize){
         int indexToAdd = -1;
 
-        for (int i = 0; i < mFootLayouts.length; i++) {
-            if (mFootLayouts[i] == 0){
+        for (int i = 0; i < mFootLayoutAndSpanStates.length; i+=3) {
+            if (mFootLayoutAndSpanStates[i] == 0){
                 indexToAdd = i;
                 break;
             }
         }
 
         if (indexToAdd == -1){
-            indexToAdd = mFootLayouts.length;
-            mFootLayouts = Arrays.copyOf(mFootLayouts,
-                    indexToAdd < 2 ? 2 : indexToAdd*2);
-            for (int i = indexToAdd; i < mFootLayouts.length; i++) {
-                mFootLayouts[i] = 0;
+            indexToAdd = mFootLayoutAndSpanStates.length;
+            mFootLayoutAndSpanStates = Arrays.copyOf(mFootLayoutAndSpanStates,
+                    indexToAdd < 3 ? 3 : indexToAdd*3);
+            for (int i = indexToAdd; i < mFootLayoutAndSpanStates.length; i++) {
+                mFootLayoutAndSpanStates[i] = 0;
             }
         }
 
-        mFootLayouts[indexToAdd] = footLayout;
+        mFootLayoutAndSpanStates[indexToAdd] = footLayout;
+        mFootLayoutAndSpanStates[indexToAdd+1] = fullSpan ? 1 : 0;
+        mFootLayoutAndSpanStates[indexToAdd+2] = spanSize;
     }
 
     public boolean hasFoot(){
@@ -477,13 +543,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     }
 
     public int getFootSize(){
-        for (int i = 0; i < mFootLayouts.length; i++) {
-            if (mFootLayouts[i] == 0){
+        for (int i = 0; i < mFootLayoutAndSpanStates.length/3; i++) {
+            if (mFootLayoutAndSpanStates[i*3] == 0){
                 return i;
             }
         }
 
-        return mFootLayouts.length;
+        return mFootLayoutAndSpanStates.length/3;
     }
 
     public void setCallback(DiffUtilCallback<T> callback) {
@@ -525,7 +591,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             if (mAlwaysShowHead){
                 if (index < getHeadSize()){
                     //头部布局
-                    convertHead(holder,mHeadLayouts[index],index);
+                    convertHead(holder, mHeadLayoutAndSpanStates[index*3],index);
                     return;
                 }
                 index = position - getHeadSize();
@@ -537,7 +603,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             index = index - 1;
             if (index < getFootSize()){
                 //尾部布局
-                convertFoot(holder,mFootLayouts[index],index);
+                convertFoot(holder, mFootLayoutAndSpanStates[index*3],index);
                 return;
             }
 
@@ -550,7 +616,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             if (mAlwaysShowHead){
                 if (index < getHeadSize()){
                     //头部布局
-                    convertHead(holder,mHeadLayouts[index],index);
+                    convertHead(holder, mHeadLayoutAndSpanStates[index*3],index);
                     return;
                 }
                 index = position - getHeadSize();
@@ -562,7 +628,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             index = index - 1;
             if (index < getFootSize()){
                 //尾部布局
-                convertFoot(holder,mFootLayouts[index],index);
+                convertFoot(holder, mFootLayoutAndSpanStates[index*3],index);
                 return;
             }
 
@@ -573,7 +639,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         int index = position;
         if (index < getHeadSize()){
             //头部布局
-            convertHead(holder,mHeadLayouts[index],index);
+            convertHead(holder, mHeadLayoutAndSpanStates[index*3],index);
             return;
         }
         index = position - getHeadSize();
@@ -586,7 +652,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         index = position - getHeadSize() - mData.size();
         if (index < getFootSize()){
             //尾部布局
-            convertFoot(holder,mFootLayouts[index],index);
+            convertFoot(holder, mFootLayoutAndSpanStates[index*3],index);
             return;
         }
         if (canAutoLoadMore()){
@@ -635,7 +701,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             int index = position;
             if (mAlwaysShowHead){
                 if (index < getHeadSize()){
-                    return mHeadLayouts[index];
+                    return mHeadLayoutAndSpanStates[index*3];
                 }
                 index = position - getHeadSize();
             }
@@ -647,7 +713,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             index = index -1;
             if (mAlwaysShowFoot){
                 if (index < getFootSize()){
-                    return mFootLayouts[index];
+                    return mFootLayoutAndSpanStates[index*3];
                 }
             }
 
@@ -659,7 +725,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             int index = position;
             if (mAlwaysShowHead){
                 if (index < getHeadSize()){
-                    return mHeadLayouts[index];
+                    return mHeadLayoutAndSpanStates[index*3];
                 }
                 index = position - getHeadSize();
             }
@@ -671,7 +737,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             index = index -1;
             if (mAlwaysShowFoot){
                 if (index < getFootSize()){
-                    return mFootLayouts[index];
+                    return mFootLayoutAndSpanStates[index*3];
                 }
             }
 
@@ -680,7 +746,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
         int index = position;
         if (index < getHeadSize()){
-            return mHeadLayouts[index];
+            return mHeadLayoutAndSpanStates[index*3];
         }
         index = position - getHeadSize();
         if (index < mData.size()){
@@ -688,7 +754,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         }
         index = position - getHeadSize() - mData.size();
         if (index < getFootSize()) {
-            return mFootLayouts[index];
+            return mFootLayoutAndSpanStates[index*3];
         }
 
         return mLoadMoreLayout;
@@ -704,22 +770,54 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
         final int position = holder.getAdapterPosition();
         if (mShowErrorView){
-            //当数据异常时，所有界面都FullSpan
+            if (mAlwaysShowHead && position < getHeadSize()){
+                //显示头部
+                layoutParams.setFullSpan(mHeadLayoutAndSpanStates[position*3+1] == 1);
+                return;
+            }
+            if (mAlwaysShowFoot) {
+                int index = position - (mAlwaysShowHead ? (getHeadSize() + 1) : 1);
+                if (index >= 0 && index < getFootSize()) {
+                    //显示尾部
+                    layoutParams.setFullSpan(mFootLayoutAndSpanStates[index * 3 + 1] == 1);
+                    return;
+                }
+            }
+            //当数据异常时，Error界面为FullSpan
             layoutParams.setFullSpan(true);
             return;
         }
         if (mData.isEmpty()){
-            //当数据为空时，所有界面都FullSpan
+            if (mAlwaysShowHead && position < getHeadSize()){
+                //显示头部
+                layoutParams.setFullSpan(mHeadLayoutAndSpanStates[position*3+1] == 1);
+                return;
+            }
+            if (mAlwaysShowFoot) {
+                int index = position - (mAlwaysShowHead ? (getHeadSize() + 1) : 1);
+                if (index >= 0 && index < getFootSize()) {
+                    //显示尾部
+                    layoutParams.setFullSpan(mFootLayoutAndSpanStates[index * 3 + 1] == 1);
+                    return;
+                }
+            }
+            //当数据为空时，Empty界面为FullSpan
             layoutParams.setFullSpan(true);
             return;
         }
         if (position < getHeadSize()){
             //显示头部
-            layoutParams.setFullSpan(true);
+            layoutParams.setFullSpan(mHeadLayoutAndSpanStates[position*3+1] == 1);
             return;
         }
-        if (position >= getHeadSize()+mData.size()){
-            //显示尾部及加载更多
+        int index = position - (getHeadSize() + mData.size());
+        if (index >= 0 && index < getFootSize()){
+            //显示尾部
+            layoutParams.setFullSpan(mFootLayoutAndSpanStates[index*3+1] == 1);
+            return;
+        }
+        if (index >= 0){
+            //显示加载更多
             layoutParams.setFullSpan(true);
             return;
         }
@@ -739,19 +837,89 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
             @Override
             public int getSpanSize(int position) {
                 if (mShowErrorView){
-                    //当数据异常时，所有界面都FullSpan
+                    if (mAlwaysShowHead && position < getHeadSize()){
+                        //显示头部
+                        if (mHeadLayoutAndSpanStates[position*3+2]>0){
+                            int spanCount = gridLayoutManager.getSpanCount();
+                            return mHeadLayoutAndSpanStates[position*3+2] > spanCount ? spanCount : mHeadLayoutAndSpanStates[position*3+2];
+                        }
+                        if (mHeadLayoutAndSpanStates[position*3+1] == 0){
+                            return 1;
+                        }
+                        return gridLayoutManager.getSpanCount();
+                    }
+                    if (mAlwaysShowFoot) {
+                        int index = position - (mAlwaysShowHead ? (getHeadSize() + 1) : 1);
+                        if (index >= 0 && index < getFootSize()) {
+                            //显示尾部
+                            if (mFootLayoutAndSpanStates[index*3+2] > 0) {
+                                int spanCount = gridLayoutManager.getSpanCount();
+                                return mFootLayoutAndSpanStates[index*3+2] > spanCount ? spanCount : mFootLayoutAndSpanStates[index*3+2];
+                            }
+                            if (mFootLayoutAndSpanStates[index*3+1] == 0){
+                                return 1;
+                            }
+                            return gridLayoutManager.getSpanCount();
+                        }
+                    }
+                    //当数据异常时，Error界面都FullSpan
                     return gridLayoutManager.getSpanCount();
                 }
                 if (mData.isEmpty()){
-                    //当数据为空时，所有界面都FullSpan
+                    if (mAlwaysShowHead && position < getHeadSize()){
+                        //显示头部
+                        if (mHeadLayoutAndSpanStates[position*3+2]>0){
+                            int spanCount = gridLayoutManager.getSpanCount();
+                            return mHeadLayoutAndSpanStates[position*3+2] > spanCount ? spanCount : mHeadLayoutAndSpanStates[position*3+2];
+                        }
+                        if (mHeadLayoutAndSpanStates[position*3+1] == 0){
+                            return 1;
+                        }
+                        return gridLayoutManager.getSpanCount();
+                    }
+                    if (mAlwaysShowFoot) {
+                        int index = position - (mAlwaysShowHead ? (getHeadSize() + 1) : 1);
+                        if (index >= 0 && index < getFootSize()) {
+                            //显示尾部
+                            if (mFootLayoutAndSpanStates[index*3+2] > 0) {
+                                int spanCount = gridLayoutManager.getSpanCount();
+                                return mFootLayoutAndSpanStates[index*3+2] > spanCount ? spanCount : mFootLayoutAndSpanStates[index*3+2];
+                            }
+                            if (mFootLayoutAndSpanStates[index*3+1] == 0){
+                                return 1;
+                            }
+                            return gridLayoutManager.getSpanCount();
+                        }
+                    }
+                    //当数据为空时，Empty界面都FullSpan
                     return gridLayoutManager.getSpanCount();
                 }
                 if (position < getHeadSize()){
                     //显示头部
+                    if (mHeadLayoutAndSpanStates[position*3+2] > 0) {
+                        int spanCount = gridLayoutManager.getSpanCount();
+                        return mHeadLayoutAndSpanStates[position*3+2] > spanCount ? spanCount : mHeadLayoutAndSpanStates[position*3+2];
+                    }
+                    if (mHeadLayoutAndSpanStates[position*3+1] == 0){
+                        return 1;
+                    }
                     return gridLayoutManager.getSpanCount();
                 }
-                if (position >= getHeadSize()+mData.size()){
-                    //显示尾部及加载更多
+
+                int index = position - (getHeadSize() + mData.size());
+                if (index >= 0 && index < getFootSize()){
+                    //显示尾部
+                    if (mFootLayoutAndSpanStates[index*3+2] > 0) {
+                        int spanCount = gridLayoutManager.getSpanCount();
+                        return mFootLayoutAndSpanStates[index*3+2] > spanCount ? spanCount : mFootLayoutAndSpanStates[index*3+2];
+                    }
+                    if (mFootLayoutAndSpanStates[index*3+1] == 0){
+                        return 1;
+                    }
+                    return gridLayoutManager.getSpanCount();
+                }
+                if (index >= 0 ){
+                    //显示加载更多
                     return gridLayoutManager.getSpanCount();
                 }
 
@@ -773,7 +941,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * @param headLayout 布局id，跟index可以确定布局是第几个布局
      * @param index 添加时的顺序
      */
-    public void convertHead(BaseViewHolder holder, @LayoutRes int headLayout, int index){
+    public void convertHead(BaseViewHolder holder,int headLayout, int index){
 
     }
 
@@ -783,7 +951,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * @param footLayout 布局id，跟index可以确定布局是第几个布局
      * @param index 添加时的顺序
      */
-    public void convertFoot(BaseViewHolder holder, @LayoutRes int footLayout, int index){
+    public void convertFoot(BaseViewHolder holder,int footLayout, int index){
 
     }
 

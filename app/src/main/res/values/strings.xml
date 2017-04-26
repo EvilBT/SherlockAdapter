@@ -11,6 +11,12 @@
     <string name="always_show_head">总是显示头部</string>
     <string name="always_show_food">总是显示尾部</string>
 
+    <string name="full_span">FullSpan</string>
+    <string name="span_count">SpanSize</string>
+
+    <string name="head1">头部1</string>
+    <string name="head2">头部2</string>
+
     <string name="action_use_diff_util">Use DiffUtil</string>
     <string name="action_not_use_diff_util">Not Use DiffUtil</string>
 
@@ -20,7 +26,7 @@
     <string name="github">https://github.com/EvilBT/SherlockAdapter</string>
 
     <string-array name="activity_title">
-
+        <item>BasicActivity</item>
         <item>HeadAndFootActivity</item>
         <item>AutoLoadMoreActivity</item>
         <item>MultiItemActivity</item>
@@ -50,4 +56,5 @@
     <string name="title_activity_expandable">ExpandableActivity</string>
     <string name="details">详情</string>
     <string name="title_activity_multi_select_item">MultiSelectItemActivity</string>
+    <string name="title_activity_basic">BasicActivity</string>
 </resources>

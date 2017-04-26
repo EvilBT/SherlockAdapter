@@ -4,6 +4,7 @@
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 ## 新增功能
+- 2017-04-26 添加控制头部尾部在瀑布流或者网格布局时横跨布局的开关及spanSize的大小
 - 2017-04-13 添加保持显示头部尾部开关，在显示Error布局或者Empty布局时也能选择显示头部与尾部功能
 - 2017-04-12 添加DiffUtil支持，添加StaggeredGridLayout的混合布局实现
 - 2017-03-12 添加关闭子展开项上的所有已经可见的子项，即关闭当前展开项所有子项
@@ -31,12 +32,31 @@
 **Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    compile 'xyz.zpayh:sherlockadapter:1.0.7'
+    compile 'xyz.zpayh:sherlockadapter:1.0.8'
 }
 ```
 
 ## 新增功能使用方法
+### 控制头部尾部横跨布局
+通过以下代码控制头部尾部布局,详情及效果请参考Demo中的[`BasicActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/BasicActivity.java):
+``` java
+public class AutoLoadMoreActivity extends AppCompatActivity {
+    //...
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        //...
+        mAdapter.addHeadLayout(R.layout.item_head,fullSpan);
+        // Or 
+        // 在Grid布局时，如果spanSize <= 0的话，会根据fullSpan的值去设置返回的spanSize
+        // 大小，如果fullSpan为true，则返回spanCount，如果为false，则返回 1.
+        mAdapter.addHeadLayout(R.layout.item_head1,fullSpan,spanSize);
 
+        mAdapter.addFootLayout(R.layout.item_foot,fullSpan);
+        // Or
+        mAdapter.addFootLayout(R.layout.item_foot,fullSpan,spanSize);
+    }
+}
+```
 ### 添加保持显示头部尾部开关
 通过以下代码控制显示头部尾部开关，详情及效果请参考Demo中的[`AutoLoadMoreActivity`](https://github.com/EvilBT/SherlockAdapter/blob/master/app/src/main/java/xyz/zpayh/myadapter/AutoLoadMoreActivity.java):
 ```java

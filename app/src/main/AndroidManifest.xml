@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="xyz.zpayh.myadapter">
+          package="xyz.zpayh.myadapter">
 
     <application
         android:name=".MainApplication"
@@ -14,9 +14,9 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
@@ -24,9 +24,9 @@
             android:label="@string/title_activity_multi_item"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="MultiItemActivity" />
+                <action android:name="MultiItemActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -34,25 +34,27 @@
             android:label="@string/title_activity_expandable"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="ExpandableActivity" />
+                <action android:name="ExpandableActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".HeadAndFootActivity"
-                  android:label="@string/title_activity_HeadAndFoot">
+        <activity
+            android:name=".HeadAndFootActivity"
+            android:label="@string/title_activity_HeadAndFoot">
             <intent-filter>
-                <action android:name="HeadAndFootActivity" />
+                <action android:name="HeadAndFootActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".AutoLoadMoreActivity"
+        <activity
+            android:name=".AutoLoadMoreActivity"
             android:label="@string/title_activity_AutoLoadMore">
             <intent-filter>
-                <action android:name="AutoLoadMoreActivity" />
+                <action android:name="AutoLoadMoreActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
@@ -60,9 +62,20 @@
             android:label="@string/title_activity_multi_select_item"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
-                <action android:name="MultiSelectItemActivity" />
+                <action android:name="MultiSelectItemActivity"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".BasicActivity"
+            android:label="@string/title_activity_basic"
+            android:theme="@style/AppTheme.NoActionBar">
+
+            <intent-filter>
+                <action android:name="BasicActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
     </application>

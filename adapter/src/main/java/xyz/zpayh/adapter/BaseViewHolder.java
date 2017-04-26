@@ -291,6 +291,7 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
             if (id == null){
                 indexToAdd = i;
+                break;
             }
         }
 
