@@ -88,7 +88,6 @@ public class BasicActivity extends AppCompatActivity {
         mAdapter = new MyMultiAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        mAdapter.addHeadLayout(R.layout.item_head,true);
         mAdapter.addHeadLayout(R.layout.item_head1,false,0);
         mAdapter.addHeadLayout(R.layout.item_head2,false,0);
         //mAdapter.addFootLayout(R.layout.item_head1,false,0);
