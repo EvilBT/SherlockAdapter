@@ -121,6 +121,9 @@ public class ExpandableActivity extends AppCompatActivity {
                     if (item instanceof IExpandable){
                         IExpandable expandable = (IExpandable) item;
                         if (expandable.isExpandable()){
+                            // 修复issue#2
+                            // 这个支持包的bug: https://issuetracker.google.com/issues/37034096
+                            mStaggeredGridLayoutManager.invalidateSpanAssignments();
                             mAdapter.collapseAll(adapterPosition);
                         }else{
                             mAdapter.expandAll(adapterPosition);
