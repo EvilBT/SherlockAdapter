@@ -117,6 +117,8 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     private boolean mDetectMoves = true;
 
+    private RecyclerView mRecyclerView;
+
     /**
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
      * @param data 数据集合
@@ -134,7 +136,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             if (data != null){
                 mData.addAll(data);
             }
-            notifyDataSetChanged();
+            doNotifyDataSetChanged();
             return;
         }
 
@@ -181,25 +183,25 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             @Override
             public void onInserted(int position, int count) {
                 int skew = getHeadSize();
-                notifyItemRangeInserted(position + skew, count);
+                doNotifyItemRangeInserted(position + skew, count);
             }
 
             @Override
             public void onRemoved(int position, int count) {
                 int skew = getHeadSize();
-                notifyItemRangeRemoved(position + skew, count);
+                doNotifyItemRangeRemoved(position + skew, count);
             }
 
             @Override
             public void onMoved(int fromPosition, int toPosition) {
                 int skew = getHeadSize();
-                notifyItemMoved(fromPosition + skew, toPosition + skew);
+                doNotifyItemMoved(fromPosition + skew, toPosition + skew);
             }
 
             @Override
             public void onChanged(int position, int count, Object payload) {
                 int skew = getHeadSize();
-                notifyItemRangeChanged(position + skew, count, payload);
+                doNotifyItemRangeChanged(position + skew, count, payload);
             }
         });
     }
@@ -224,7 +226,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             mLoadState = LOADING;
         }
         mShowErrorView = false;
-        notifyItemRangeChanged(startPos,itemCount);
+        doNotifyItemRangeChanged(startPos,itemCount);
     }
 
     /**
@@ -244,7 +246,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             mIsLoading = false;
         }
         mShowErrorView = false;
-        notifyItemRangeChanged(startPos,itemCount);
+        doNotifyItemRangeChanged(startPos,itemCount);
     }
 
     public void removeData(IMultiItem data){
@@ -286,7 +288,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         if (removeSize == 0){
             Log.d("ExpandableAdapter", "有异常");
         }else {
-            notifyItemRangeRemoved(adapterPosition,removeSize);
+            doNotifyItemRangeRemoved(adapterPosition,removeSize);
         }
 
     }
@@ -334,7 +336,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-1] = 0;
         mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-2] = 0;
         mHeadLayoutAndSpanStates[mHeadLayoutAndSpanStates.length-3] = 0;
-        notifyItemRemoved(adapterPosition);
+        doNotifyItemRemoved(adapterPosition);
     }
 
     public void removeFoot(int adapterPosition){
@@ -355,7 +357,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-1] = 0;
         mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-2] = 0;
         mFootLayoutAndSpanStates[mFootLayoutAndSpanStates.length-3] = 0;
-        notifyItemRemoved(adapterPosition);
+        doNotifyItemRemoved(adapterPosition);
     }
 
     public void removeAllHead(){
@@ -368,7 +370,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             mHeadLayoutAndSpanStates[i*3+1] = 0;
             mHeadLayoutAndSpanStates[i*3+2] = 0;
         }
-        notifyItemRangeRemoved(0,size);
+        doNotifyItemRangeRemoved(0,size);
     }
 
     public void removeAllFoot(){
@@ -381,7 +383,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             mFootLayoutAndSpanStates[i*3+1] = 0;
             mFootLayoutAndSpanStates[i*3+2] = 0;
         }
-        notifyItemRangeRemoved(getHeadSize()+ getDataSize(),size);
+        doNotifyItemRangeRemoved(getHeadSize()+ getDataSize(),size);
     }
 
     /**
@@ -425,9 +427,9 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         mAlwaysShowHead = alwaysShowHead;
         if (hasHead() && (mShowErrorView || mData.isEmpty())){
             if (mAlwaysShowHead) {
-                notifyItemRangeInserted(0, getHeadSize());
+                doNotifyItemRangeInserted(0, getHeadSize());
             }else{
-                notifyItemRangeRemoved(0, getHeadSize());
+                doNotifyItemRangeRemoved(0, getHeadSize());
             }
         }
     }
@@ -455,9 +457,9 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             // 拿到新的显示长度
             int itemCount = getItemCount();
             if (mAlwaysShowFoot){
-                notifyItemRangeInserted(itemCount - getFootSize(),getFootSize());
+                doNotifyItemRangeInserted(itemCount - getFootSize(),getFootSize());
             }else{
-                notifyItemRangeRemoved(itemCount,getFootSize());
+                doNotifyItemRangeRemoved(itemCount,getFootSize());
             }
         }
     }
@@ -921,6 +923,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
         RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
         if (manager == null || !(manager instanceof GridLayoutManager)) return;
         final GridLayoutManager gridLayoutManager = (GridLayoutManager) manager;
@@ -1025,6 +1028,144 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         });
     }
 
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
+    }
+
+    public void doNotifyDataSetChanged() {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
+        }else{
+            notifyDataSetChanged();
+        }
+    }
+
+
+    public void doNotifyItemChanged(final int position) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemChanged(position);
+                }
+            });
+        }else{
+            notifyItemChanged(position);
+        }
+    }
+
+    public void doNotifyItemChanged(final int position,final Object payload) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemChanged(position,payload);
+                }
+            });
+        }else{
+            notifyItemChanged(position,payload);
+        }
+    }
+
+    public void doNotifyItemRangeChanged(final int positionStart,final int itemCount) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRangeChanged(positionStart,itemCount);
+                }
+            });
+        }else{
+            notifyItemRangeChanged(positionStart,itemCount);
+        }
+    }
+
+    public void doNotifyItemRangeChanged(final int positionStart,final int itemCount,final Object payload) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRangeChanged(positionStart, itemCount, payload);
+                }
+            });
+        }else{
+            notifyItemRangeChanged(positionStart, itemCount, payload);
+        }
+    }
+
+    public void doNotifyItemInserted(final int position) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemInserted(position);
+                }
+            });
+        }else{
+            notifyItemInserted(position);
+        }
+    }
+
+    public void doNotifyItemMoved(final int fromPosition,final int toPosition) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemMoved(fromPosition, toPosition);
+                }
+            });
+        }else{
+            notifyItemMoved(fromPosition, toPosition);
+        }
+    }
+
+    public void doNotifyItemRangeInserted(final int positionStart,final int itemCount) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRangeInserted(positionStart, itemCount);
+                }
+            });
+        }else{
+            notifyItemRangeInserted(positionStart, itemCount);
+        }
+    }
+
+    public void doNotifyItemRemoved(final int position) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRemoved(position);
+                }
+            });
+        }else{
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void doNotifyItemRangeRemoved(final int positionStart,final int itemCount) {
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout()){
+            mRecyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyItemRangeRemoved(positionStart, itemCount);
+                }
+            });
+        }else{
+            notifyItemRangeRemoved(positionStart, itemCount);
+        }
+    }
+
     /**
      * 如果要对头布局进行处理可重写此方法
      * @param holder 布局holder
@@ -1101,7 +1242,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
                 if (mLoadState == LOAD_FAILED){
                     // 点击加载更多
                     mLoadState = LOADING;
-                    notifyItemChanged(getItemCount()-1);
+                    doNotifyItemChanged(getItemCount()-1);
                 }
             }
         });
@@ -1151,7 +1292,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
     public void showErrorView(){
         mShowErrorView = true;
-        notifyDataSetChanged();
+        doNotifyDataSetChanged();
     }
     //======================= LoadMore ==========================
 
@@ -1159,11 +1300,11 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
     public void openAutoLoadMore(boolean open) {
         mIsLoading = false;
         if (canAutoLoadMore()&&!open) {
-            notifyDataSetChanged();
+            doNotifyDataSetChanged();
         }
         if (!mOpenAutoLoadMore&&open) {
             mLoadState = LOADING;
-            notifyDataSetChanged();
+            doNotifyDataSetChanged();
         }
         mOpenAutoLoadMore = open;
     }
@@ -1173,7 +1314,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         mLoadState = LOAD_COMPLETED;
         mIsLoading = false;
         if (canAutoLoadMore()) {
-            notifyItemChanged(getItemCount()-1);
+            doNotifyItemChanged(getItemCount()-1);
         }
     }
 
@@ -1182,7 +1323,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         mLoadState = LOAD_FAILED;
         mIsLoading = false;
         if (canAutoLoadMore()) {
-            notifyItemChanged(getItemCount()-1);
+            doNotifyItemChanged(getItemCount()-1);
         }
     }
 
@@ -1224,8 +1365,8 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
         int addShowSize = getShowSize(expandable.getSubItems());
 
-        notifyItemChanged(adapterPosition);
-        notifyItemRangeInserted(adapterPosition+1, addShowSize);
+        doNotifyItemChanged(adapterPosition);
+        doNotifyItemRangeInserted(adapterPosition+1, addShowSize);
     }
 
     /**
@@ -1250,8 +1391,8 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
         int newShowSize = getShowSize(expandable.getSubItems());
 
-        notifyItemRangeChanged(adapterPosition,subShowSize+1);
-        notifyItemRangeInserted(adapterPosition+1+subShowSize,newShowSize-subShowSize);
+        doNotifyItemRangeChanged(adapterPosition,subShowSize+1);
+        doNotifyItemRangeInserted(adapterPosition+1+subShowSize,newShowSize-subShowSize);
     }
 
     private void expandAll(List<IMultiItem> list){
@@ -1292,9 +1433,9 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
         if (expandable.isExpandable()){
             expandable.setExpandable(false);
             int removeSize = getShowSize(expandable.getSubItems());
-            notifyItemChanged(adapterPosition);
+            doNotifyItemChanged(adapterPosition);
             if (removeSize != 0){
-                notifyItemRangeRemoved(adapterPosition+1,removeSize);
+                doNotifyItemRangeRemoved(adapterPosition+1,removeSize);
             }
         }
     }
@@ -1315,9 +1456,9 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
             expandable.setExpandable(false);
             int removeSize = getShowSize(expandable.getSubItems());
             collapseAll(expandable.getSubItems());
-            notifyItemChanged(adapterPosition);
+            doNotifyItemChanged(adapterPosition);
             if (removeSize != 0){
-                notifyItemRangeRemoved(adapterPosition+1,removeSize);
+                doNotifyItemRangeRemoved(adapterPosition+1,removeSize);
             }
         }
     }
