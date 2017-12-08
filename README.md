@@ -28,11 +28,16 @@
 ## 注意事项
 先说注意事项，一般来讲，由于SherlockAdapter采用LayoutRes的值来作为ItemViewType返回，而ItemViewType是用来区分不同的Item的，所以如果不是同种Item，就不要使用同一个Layout文件，例如头部HeadLayout跟ItemLayout的布局是一样的情况下，就复制多一个Layout出来就行，不要共用一个Layout。
 
+## 兼容性
+- 最低的Android SDK: SherlockAdapter 1.1.0 要求最低API级别为14.
+- 编译的Android SDK: SherlockAdapter 1.1.0 需要您最低是API26或者是更高的版本进行编译。
 ## 开始配置
 **Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    compile 'xyz.zpayh:sherlockadapter:1.0.8'
+    implementation 'xyz.zpayh:sherlockadapter:1.1.0'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 }
 ```
 
