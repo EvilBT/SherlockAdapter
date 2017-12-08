@@ -65,13 +65,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * Empty布局，在没有数据的时间显示，默认是R.layout.default_empty
      */
     @LayoutRes
-    private int mEmptyLayout = R.layout.default_empty;
+    private int mEmptyLayout = sDefaultViewCreator.getEmptyViewLayout();
 
     /**
      * Error布局，在没有数据的时间显示，默认是R.layout.default_error
      */
     @LayoutRes
-    private int mErrorLayout = R.layout.default_error;
+    private int mErrorLayout = sDefaultViewCreator.getErrorViewLayout();
 
     /**
      * 是否显示Error布局
@@ -94,7 +94,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      * 来控制显示隐藏一些View，已经提供了默认实现
      */
     @LayoutRes
-    private int mLoadMoreLayout = R.layout.default_loadmore;
+    private int mLoadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout();
 
     /**
      * 加载更多状态，有{@link LoadMore#LOADING},{@link LoadMore#LOAD_COMPLETED}以及
@@ -115,6 +115,16 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
     private boolean mDetectMoves = true;
 
     private RecyclerView mRecyclerView;
+
+    @NonNull
+    protected static DefaultViewCreator sDefaultViewCreator = new DefaultViewCreatorImpl();
+
+    /**
+     * 全局设置设置默认的布局
+     */
+    public static void setDefaultViewCreator(@NonNull DefaultViewCreator defaultViewCreator){
+        sDefaultViewCreator = defaultViewCreator;
+    }
 
     /**
      * 设置新数据，会清除掉原有数据，并有可能重置加载更多状态
@@ -1105,23 +1115,38 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
      */
     public void convertLoadMore(BaseViewHolder holder, @LoadState int loadState){
         if (loadState == LOADING){
-            holder.setVisibility(R.id.progressBar, View.VISIBLE)
-                    .setVisibility(R.id.load_tips, View.VISIBLE)
-                    .setVisibility(R.id.load_completed, View.GONE)
-                    .setVisibility(R.id.iv_load_tips, View.GONE)
-                    .setText(R.id.load_tips,R.string.loading);
+            // 正在加载
+            convertLoading(holder);
         }else if (loadState == LOAD_FAILED) {
-            holder.setVisibility(R.id.progressBar, View.GONE)
-                    .setVisibility(R.id.load_tips, View.VISIBLE)
-                    .setVisibility(R.id.load_completed, View.GONE)
-                    .setVisibility(R.id.iv_load_tips, View.VISIBLE)
-                    .setText(R.id.load_tips, R.string.load_failed);
+            // 加载失败
+            convertLoadFailed(holder);
         }else if (loadState == LOAD_COMPLETED){
-            holder.setVisibility(R.id.progressBar, View.GONE)
-                    .setVisibility(R.id.load_tips, View.GONE)
-                    .setVisibility(R.id.iv_load_tips, View.GONE)
-                    .setVisibility(R.id.load_completed, View.VISIBLE);
+            // 完成加载（没有更多）
+            convertLoadCompleted(holder);
         }
+    }
+
+    public void convertLoading(BaseViewHolder holder){
+        holder.setVisibility(R.id.progressBar, View.VISIBLE)
+                .setVisibility(R.id.load_tips, View.VISIBLE)
+                .setVisibility(R.id.load_completed, View.GONE)
+                .setVisibility(R.id.iv_load_tips, View.GONE)
+                .setText(R.id.load_tips,R.string.loading);
+    }
+
+    public void convertLoadFailed(BaseViewHolder holder){
+        holder.setVisibility(R.id.progressBar, View.GONE)
+                .setVisibility(R.id.load_tips, View.VISIBLE)
+                .setVisibility(R.id.load_completed, View.GONE)
+                .setVisibility(R.id.iv_load_tips, View.VISIBLE)
+                .setText(R.id.load_tips, R.string.load_failed);
+    }
+
+    public void convertLoadCompleted(BaseViewHolder holder){
+        holder.setVisibility(R.id.progressBar, View.GONE)
+                .setVisibility(R.id.load_tips, View.GONE)
+                .setVisibility(R.id.iv_load_tips, View.GONE)
+                .setVisibility(R.id.load_completed, View.VISIBLE);
     }
 
     /**

@@ -18,20 +18,20 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    api "com.android.support:appcompat-v7:$supportLibraryVersion"
+    testImplementation 'junit:junit:4.12'
+    api "com.android.support:recyclerview-v7:$supportLibraryVersion"
 }
 
 publish {
     userOrg = 'sherlock'      //bintray注册的用户名
     groupId = 'xyz.zpayh'         //compile引用时的第1部分groupId
     artifactId = 'sherlockadapter'     //compile引用时的第2部分项目名
-    publishVersion = '1.0.9'    //compile引用时的第3部分版本号
+    publishVersion = '1.1.0'    //compile引用时的第3部分版本号
     desc = 'This is a sherlock adapter extend library'
     website = 'https://github.com/EvilBT/SherlockAdapter'
 }
