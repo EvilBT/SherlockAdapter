@@ -16,6 +16,7 @@
 
 package xyz.zpayh.adapter;
 
+import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -86,6 +87,15 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
 
     public BaseViewHolder(View itemView) {
         super(itemView);
+        mInitClickListener = false;
+        mInitLongClickListener = false;
+    }
+
+    public ViewDataBinding binding;
+
+    public BaseViewHolder(ViewDataBinding binding){
+        super(binding.getRoot());
+        this.binding = binding;
         mInitClickListener = false;
         mInitLongClickListener = false;
     }
