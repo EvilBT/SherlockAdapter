@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void convert(BaseViewHolder holder, String data, int index) {
-                holder.setText(R.id.tv_act_title,data);
+                //holder.setText(R.id.tv_act_title,data);
+                holder.setVariable(xyz.zpayh.myadapter.BR.title,data);
             }
 
             @Override

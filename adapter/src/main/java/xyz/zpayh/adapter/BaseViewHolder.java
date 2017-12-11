@@ -122,6 +122,12 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         this.mOnItemCheckedChangeListener = onItemCheckedChangeListener;
     }
 
+    public void setVariable(int variableId, Object value){
+        if (binding != null) {
+            binding.setVariable(variableId, value);
+        }
+    }
+
     /**
      * 设置响应点击事件，如果设置了clickable为true的话，在{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}
      * 中会得到响应事件的回调,详情参考{@link BaseAdapter#setOnItemClickListener(OnItemClickListener)}

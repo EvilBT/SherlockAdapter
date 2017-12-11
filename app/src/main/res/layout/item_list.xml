@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    android:id="@+id/app_root"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
-    <TextView
-        android:id="@+id/tv_act_title"
-        android:layout_gravity="center"
-        tools:text="Hello World"
-        style="@style/Base.TextAppearance.AppCompat.Headline"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-</android.support.v7.widget.CardView>
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="title"
+            type="String"/>
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/app_root"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true">
+        <TextView
+            android:id="@+id/tv_act_title"
+            android:layout_gravity="center"
+            tools:text="Hello World"
+            android:text="@{title}"
+            style="@style/Base.TextAppearance.AppCompat.Headline"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </android.support.v7.widget.CardView>
+</layout>

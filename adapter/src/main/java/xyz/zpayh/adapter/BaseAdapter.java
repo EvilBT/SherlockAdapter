@@ -16,6 +16,8 @@
 
 package xyz.zpayh.adapter;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.annotation.CheckResult;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -580,8 +582,16 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup parent, int layoutRes) {
-        BaseViewHolder baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
+        BaseViewHolder baseViewHolder;
+        ViewDataBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),layoutRes,
+                parent,false);
+        if (binding == null) {
+            baseViewHolder = new BaseViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(layoutRes, parent, false));
+        } else {
+            baseViewHolder = new BaseViewHolder(binding);
+        }
+
         if (layoutRes == mLoadMoreLayout){
             //默认实现的加载更多添加点击事件
             bindLoadMore(baseViewHolder);
