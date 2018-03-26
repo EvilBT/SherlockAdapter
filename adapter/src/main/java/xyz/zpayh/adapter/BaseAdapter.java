@@ -233,6 +233,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
 
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
+            mIsLoading = false;
         }
         mShowErrorView = false;
         doNotifyItemRangeChanged(startPos,itemCount);

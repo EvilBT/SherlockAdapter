@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">adapter-kotlin</string>
+
+    <string name="loading">加载中&#8230;</string>
+    <string name="load_failed">加载失败，点击重新加载</string>
+    <string name="no_more">没有更多数据</string>
+</resources>
