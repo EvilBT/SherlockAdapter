@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/act_auto_load_more"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".AutoLoadMoreActivity">
+    <LinearLayout
+        android:background="@color/base_divider_color"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/button_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/action_add"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/action_add"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/action_failed"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/action_failed"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/action_completed"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/action_completed"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/action_empty"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/action_empty"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/action_close"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/action_close"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/sr_refresh"
+        android:layout_above="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_list_load_more"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <CheckBox
+            android:id="@+id/cb_show_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/always_show_head"/>
+
+        <CheckBox
+            android:id="@+id/cb_show_foot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/always_show_food"/>
+    </LinearLayout>
+</RelativeLayout>

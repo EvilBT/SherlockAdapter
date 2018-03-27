@@ -2,6 +2,7 @@ package cn.sherlockzp.sample
 
 import android.os.Bundle
 import android.app.Activity
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.ImageView
 import cn.sherlockzp.adapter.BaseAdapter
@@ -14,7 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 
 import kotlinx.android.synthetic.main.activity_head_and_foot.*
 
-class HeadAndFootActivity : Activity() {
+class HeadAndFootActivity : AppCompatActivity() {
 
     private val titles = arrayOf("Adult","Easter Eggs","Girl", "Sunset")
     private val imageResIds = arrayOf(R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset)

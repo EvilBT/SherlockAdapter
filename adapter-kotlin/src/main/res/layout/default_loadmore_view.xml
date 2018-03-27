@@ -7,14 +7,12 @@
     android:layout_height="40dp">
 
     <ProgressBar
-        android:visibility="gone"
         style="?android:attr/progressBarStyle"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:id="@+id/progressBar"
         android:indeterminate="true" />
     <TextView
-        android:visibility="gone"
         android:id="@+id/load_tips"
         android:text="@string/loading"
         android:layout_margin="4dp"

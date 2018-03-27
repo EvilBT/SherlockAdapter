@@ -59,12 +59,36 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
     private var loadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout()
 
     var onLoadMoreListener: OnLoadMoreListener? = null
-    var openAutoLoadMore = false
+    private var openAutoLoadMore = false
     var loadState = LoadState.LOADING
     private var isLoading = false
 
     var onItemClickListener: OnItemClickListener? = null
     var onItemLongClickListener: OnItemLongClickListener? = null
+
+    fun setOnLoadMoreListener(listener: () -> Unit) {
+        onLoadMoreListener = object : OnLoadMoreListener {
+            override fun onLoadMore() {
+                listener()
+            }
+        }
+    }
+
+    fun setOnItemClickListener(listener: (view: View, adapterPosition: Int) -> Unit) {
+        onItemClickListener = object : OnItemClickListener{
+            override fun onItemClick(view: View, adapterPosition: Int) {
+                listener(view, adapterPosition)
+            }
+        }
+    }
+
+    fun setOnItemLongClickListener(listener: (view: View, adapterPosition: Int) -> Boolean) {
+        onItemLongClickListener = object : OnItemLongClickListener {
+            override fun onItemLongClick(view: View, adapterPosition: Int): Boolean {
+                return listener(view, adapterPosition)
+            }
+        }
+    }
 
     private var recyclerView: RecyclerView? = null
 
@@ -237,7 +261,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
         if (index < footSize) {
             return footLayoutConfigs[index].layout
         }
-        return getLayoutRes(index)
+        return loadMoreLayout
     }
 
     override fun getItemCount(): Int {
@@ -404,7 +428,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
         }
 
         val data = getData(holder.adapterPosition)
-        if (data is IMultItem) {
+        if (data is IMultiItem) {
             lp.isFullSpan = data.isFullSpan()
         }
     }
@@ -454,7 +478,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
                 }
 
                 val data = getData(position)
-                if (data != null && data is IMultItem) {
+                if (data != null && data is IMultiItem) {
                     return when(data.getSpanSize()){
                         in 1 until manager.spanCount -> data.getSpanSize()
                         else -> {

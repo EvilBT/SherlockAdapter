@@ -12,7 +12,7 @@ import android.support.annotation.LayoutRes
  * 修改备注:
  *  移除了getViewType接口，添加
  */
-interface IMultItem {
+interface IMultiItem {
 
     /**
      * 不同类型的item请使用不同的布局文件（即使它们的布局是一样的），
@@ -48,7 +48,7 @@ interface IMultItem {
     fun isFullSpan() = false
 }
 
-interface IMultiSelectItem : IMultItem {
+interface IMultiSelectItem : IMultiItem {
     var checked: Boolean
 
     /**

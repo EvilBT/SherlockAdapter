@@ -28,4 +28,22 @@
     <string name="action_ues_staggered">StaggeredGridLayoutManager</string>
 
     <string name="github">https://github.com/EvilBT/SherlockAdapter</string>
+    <string name="title_activity_multi_item">多布局</string>
+
+    <string-array name="list">
+        <item>Android</item>
+        <item>iOS</item>
+        <item>Java</item>
+        <item>JavaScript</item>
+        <item>Python</item>
+        <item>C</item>
+        <item>C++</item>
+        <item>Ruby</item>
+        <item>AngularJs</item>
+        <item>ReactJs</item>
+        <item>Html5</item>
+        <item>TensorFlow</item>
+        <item>Swift</item>
+    </string-array>
+    <string name="title_activity_auto_load_more">加载更多</string>
 </resources>

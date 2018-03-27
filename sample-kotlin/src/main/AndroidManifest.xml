@@ -17,16 +17,40 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".BasicActivity"
-            android:label="@string/title_activity_basic" />
+            android:label="@string/title_activity_basic">
+            <intent-filter>
+                <action android:name="Sherlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".HeadAndFootActivity"
             android:label="@string/title_activity_head_and_foot">
             <intent-filter>
                 <action android:name="Sherlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MultiItemActivity"
+            android:label="@string/title_activity_multi_item">
+            <intent-filter>
+                <action android:name="Sherlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AutoLoadMoreActivity"
+            android:label="@string/title_activity_auto_load_more">
+            <intent-filter>
+                <action android:name="Sherlock" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
