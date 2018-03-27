@@ -3,9 +3,17 @@ package cn.sherlockzp.adapter
 import android.view.View
 
 
-class BaseMultiSelectAdapter : BaseAdapter<IMultiSelectItem>(){
+open class BaseMultiSelectAdapter : BaseAdapter<IMultiSelectItem>(){
 
     var onItemCheckedChangeListener: OnItemCheckedChangeListener? = null
+
+    fun setOnItemCheckChangeListener(listener: (view: View, isChecked: Boolean, adapterPosition: Int) -> Unit) {
+        onItemCheckedChangeListener = object : OnItemCheckedChangeListener{
+            override fun onItemCheck(view: View, isChecked: Boolean, adapterPosition: Int) {
+                listener(view, isChecked, adapterPosition)
+            }
+        }
+    }
 
     override fun getLayoutRes(index: Int) = data[index].getLayoutRes()
 
@@ -42,5 +50,9 @@ class BaseMultiSelectAdapter : BaseAdapter<IMultiSelectItem>(){
         doNotifyDataSetChanged()
     }
 
-    fun getSelectedItems() = data.filter { it.checked }
+    /**
+     * 返回所有选中的item项，另外，如果CheckableViewId == View.NO_ID 时，本身是没有选择状态的，这里剔除掉
+     * 这些不可选择项
+     */
+    fun getSelectedItems() = data.filter { it.checked && it.getCheckableViewId() != View.NO_ID }
 }

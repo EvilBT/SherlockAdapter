@@ -46,4 +46,5 @@
         <item>Swift</item>
     </string-array>
     <string name="title_activity_auto_load_more">加载更多</string>
+    <string name="title_activity_multi_select_item">多选列表</string>
 </resources>

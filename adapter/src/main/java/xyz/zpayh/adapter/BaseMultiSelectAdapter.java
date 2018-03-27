@@ -73,7 +73,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
     public List<IMultiSelectItem> getSelectedItems() {
         List<IMultiSelectItem> selectedItems = new ArrayList<>();
         for (IMultiSelectItem selectorItem : mData) {
-            if (selectorItem.isChecked()){
+            if (selectorItem.isChecked() && selectorItem.getCheckableViewId() != View.NO_ID){
                 selectedItems.add(selectorItem);
             }
         }

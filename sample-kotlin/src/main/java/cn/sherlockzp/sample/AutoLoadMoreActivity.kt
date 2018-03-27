@@ -1,7 +1,6 @@
 package cn.sherlockzp.sample
 
 import android.os.Bundle
-import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -11,7 +10,6 @@ import cn.sherlockzp.adapter.LayoutConfig
 import cn.sherlockzp.sample.model.ImageCard
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-
 import kotlinx.android.synthetic.main.activity_auto_load_more.*
 
 class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
@@ -23,6 +21,10 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
     private var state = LOAD_ADD
 
     private var showEmpty = true
+
+    private val width by lazy {
+        resources.displayMetrics.widthPixels
+    }
 
     private val titles = arrayOf("Adult","Easter Eggs","Girl", "Sunset")
     private val imageResIds = arrayOf(R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset)
@@ -37,6 +39,7 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
                         Glide.with(it.context)
                                 .load(data.imageResId)
                                 .apply(RequestOptions.fitCenterTransform())
+                                .apply(RequestOptions.overrideOf(width))
                                 .into(it)
                     }
         }
@@ -106,6 +109,7 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
         for (i in titles.indices) {
             data.add(ImageCard(imageResIds[i], titles[i]))
         }
+        adapter.setData(data)
     }
 
     override fun onClick(v: View?) {

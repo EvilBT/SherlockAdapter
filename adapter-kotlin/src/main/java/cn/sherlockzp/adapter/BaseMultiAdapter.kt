@@ -1,6 +1,6 @@
 package cn.sherlockzp.adapter
 
-class BaseMultiAdapter : BaseAdapter<IMultiItem>(){
+open class BaseMultiAdapter : BaseAdapter<IMultiItem>(){
 
     override fun getLayoutRes(index: Int) = data[index].getLayoutRes()
 
