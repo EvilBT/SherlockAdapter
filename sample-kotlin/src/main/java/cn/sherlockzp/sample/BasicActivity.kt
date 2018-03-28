@@ -50,7 +50,7 @@ class BasicActivity : AppCompatActivity() {
             addHeadLayout(R.layout.item_head2,false)
             setOnItemLongClickListener { _, adapterPosition ->
                 AlertDialog.Builder(this@BasicActivity)
-                        .setTitle("是否删除第${application}项")
+                        .setTitle("是否删除第${adapterPosition}项")
                         .setPositiveButton("确定"){
                             _,_ ->
                             adapter.removeDataAt(adapterPosition)

@@ -25,6 +25,8 @@ allprojects {
     }
 }
 
+tasks.getByPath(":adapter-kotlin:releaseAndroidJavadocs").enabled = false
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

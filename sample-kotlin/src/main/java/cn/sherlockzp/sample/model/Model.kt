@@ -3,6 +3,7 @@ package cn.sherlockzp.sample.model
 import android.support.annotation.DrawableRes
 import android.view.View
 import cn.sherlockzp.adapter.BaseViewHolder
+import cn.sherlockzp.adapter.IExpandable
 import cn.sherlockzp.adapter.IMultiItem
 import cn.sherlockzp.adapter.IMultiSelectItem
 import cn.sherlockzp.sample.R
@@ -88,4 +89,40 @@ data class NoSelected(val text: String, override var checked: Boolean = false) :
      * @return 返回一个实现了Checkable接口的View id.
      */
     override fun getCheckableViewId() = View.NO_ID
+}
+
+class ImageLabel(private val label : String) : IExpandable {
+
+    override var expandable = false
+
+    var subItems = ArrayList<IMultiItem>()
+
+    override fun getLayoutRes() = R.layout.item_image_label
+
+    override fun convert(holder: BaseViewHolder) {
+        holder.setText(R.id.tv_image_label, label)
+    }
+
+    override fun getSubItems(): MutableList<IMultiItem>? {
+        return subItems
+    }
+
+    override fun isFullSpan() = true
+
+    override fun getSpanSize() = 3
+}
+
+data class Card(private val width: Int,@DrawableRes private val imageResId : Int, val title: String) : IMultiItem {
+    override fun getLayoutRes() = R.layout.item_image_card
+
+    override fun convert(holder: BaseViewHolder) {
+        holder.setText(R.id.tv_image_title, title)
+                .setImage(R.id.iv_bg){
+                    Glide.with(it.context)
+                            .load(imageResId)
+                            .apply(RequestOptions.fitCenterTransform())
+                            .apply(RequestOptions.overrideOf(width))
+                            .into(it)
+                }
+    }
 }

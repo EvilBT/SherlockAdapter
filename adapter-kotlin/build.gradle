@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'com.novoda.bintray-release'
+
 android {
     compileSdkVersion 27
 
@@ -38,4 +40,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+publish {
+    userOrg = 'sherlock'      //bintray注册的用户名
+    groupId = 'cn.sherlockzp'         //compile引用时的第1部分groupId
+    artifactId = 'ksherlockadapter'     //compile引用时的第2部分项目名
+    publishVersion = '0.0.1'    //compile引用时的第3部分版本号
+    desc = 'This is a kotlin sherlock adapter extend library'
+    website = 'https://github.com/EvilBT/SherlockAdapter'
 }

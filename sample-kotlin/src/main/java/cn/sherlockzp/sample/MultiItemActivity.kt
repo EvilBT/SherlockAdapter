@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import cn.sherlockzp.adapter.BaseExpandableAdapter
 import cn.sherlockzp.adapter.BaseMultiAdapter
 import cn.sherlockzp.adapter.IMultiItem
 import cn.sherlockzp.sample.model.Image
@@ -24,7 +25,7 @@ class MultiItemActivity : AppCompatActivity() {
         StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
 
-    private val adapter = BaseMultiAdapter()
+    private val adapter = BaseMultiAdapter() //BaseExpandableAdapter()
     private val data = ArrayList<IMultiItem>()
 
     private var isGrid = true

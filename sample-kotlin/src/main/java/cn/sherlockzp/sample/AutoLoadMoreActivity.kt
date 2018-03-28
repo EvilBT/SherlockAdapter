@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import cn.sherlockzp.adapter.BaseAdapter
+import cn.sherlockzp.adapter.BaseExpandableAdapter
 import cn.sherlockzp.adapter.BaseViewHolder
 import cn.sherlockzp.adapter.LayoutConfig
+import cn.sherlockzp.sample.model.Card
 import cn.sherlockzp.sample.model.ImageCard
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -48,6 +50,13 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
             holder.setText(R.id.tv_head, "这是加载更多")
         }
     }
+    /*
+    private val data = ArrayList<Card>()
+    private val adapter = object : BaseExpandableAdapter() {
+        override fun convertHead(holder: BaseViewHolder, headLayout: LayoutConfig) {
+            holder.setText(R.id.tv_head, "这是加载更多")
+        }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,6 +117,7 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
     private fun initData() {
         for (i in titles.indices) {
             data.add(ImageCard(imageResIds[i], titles[i]))
+            //data.add(Card(width, imageResIds[i], titles[i]))
         }
         adapter.setData(data)
     }

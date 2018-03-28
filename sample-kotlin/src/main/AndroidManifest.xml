@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="cn.sherlockzp.sample">
+    package="cn.sherlockzp.sample">
 
     <application
         android:allowBackup="true"
@@ -13,54 +13,63 @@
             android:name=".MainActivity"
             android:label="@string/main_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".BasicActivity"
             android:label="@string/title_activity_basic">
             <intent-filter>
-                <action android:name="Sherlock"/>
+                <action android:name="Sherlock" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".HeadAndFootActivity"
             android:label="@string/title_activity_head_and_foot">
             <intent-filter>
-                <action android:name="Sherlock"/>
+                <action android:name="Sherlock" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MultiItemActivity"
             android:label="@string/title_activity_multi_item">
             <intent-filter>
-                <action android:name="Sherlock"/>
+                <action android:name="Sherlock" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".AutoLoadMoreActivity"
             android:label="@string/title_activity_auto_load_more">
             <intent-filter>
-                <action android:name="Sherlock"/>
+                <action android:name="Sherlock" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MultiSelectItemActivity"
             android:label="@string/title_activity_multi_select_item">
             <intent-filter>
-                <action android:name="Sherlock"/>
+                <action android:name="Sherlock" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ExpandableActivity"
+            android:label="@string/title_activity_expandable">
+            <intent-filter>
+                <action android:name="Sherlock" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

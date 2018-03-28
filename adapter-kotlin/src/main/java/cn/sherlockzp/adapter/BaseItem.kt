@@ -59,3 +59,15 @@ interface IMultiSelectItem : IMultiItem {
     @IdRes
     fun getCheckableViewId(): Int
 }
+
+interface IExpandable : IMultiItem {
+    /**
+     * true 表示展开子列表，false 表示关闭子列表
+     */
+    var expandable: Boolean
+
+    /**
+     * 返回可展开的子列表
+     */
+    fun getSubItems(): MutableList<IMultiItem>?
+}

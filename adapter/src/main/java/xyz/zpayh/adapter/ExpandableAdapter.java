@@ -224,6 +224,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
 
         if (mOpenAutoLoadMore){
             mLoadState = LOADING;
+            mIsLoading = false;
         }
         mShowErrorView = false;
         doNotifyItemRangeChanged(startPos,itemCount);
