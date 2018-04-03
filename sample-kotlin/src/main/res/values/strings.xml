@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Sample-kotlin</string>
+
+    <string name="main_name">主页面</string>
+    <string name="title_activity_basic">基本示例</string>
+    <string name="title_activity_head_and_foot">头部与尾部</string>
+
+    <string name="action_add">添加数据</string>
+    <string name="action_completed">完成加载</string>
+    <string name="action_failed">加载失败</string>
+    <string name="action_close">关闭加载</string>
+    <string name="action_error">异常数据</string>
+    <string name="action_empty">空数据</string>
+
+    <string name="always_show_head">总是显示头部</string>
+    <string name="always_show_food">总是显示尾部</string>
+
+    <string name="full_span">FullSpan</string>
+    <string name="span_count">SpanSize</string>
+
+    <string name="head1">头部1</string>
+    <string name="head2">头部2</string>
+
+    <string name="action_use_diff_util">Use DiffUtil</string>
+    <string name="action_not_use_diff_util">Not Use DiffUtil</string>
+
+    <string name="action_use_grid">GridLayoutManager</string>
+    <string name="action_ues_staggered">StaggeredGridLayoutManager</string>
+
+    <string name="github">https://github.com/EvilBT/SherlockAdapter</string>
+    <string name="title_activity_multi_item">多布局</string>
+
+    <string-array name="list">
+        <item>Android</item>
+        <item>iOS</item>
+        <item>Java</item>
+        <item>JavaScript</item>
+        <item>Python</item>
+        <item>C</item>
+        <item>C++</item>
+        <item>Ruby</item>
+        <item>AngularJs</item>
+        <item>ReactJs</item>
+        <item>Html5</item>
+        <item>TensorFlow</item>
+        <item>Swift</item>
+    </string-array>
+    <string name="title_activity_auto_load_more">加载更多</string>
+    <string name="title_activity_multi_select_item">多选列表</string>
+    <string name="title_activity_expandable">多级展开列表</string>
+</resources>

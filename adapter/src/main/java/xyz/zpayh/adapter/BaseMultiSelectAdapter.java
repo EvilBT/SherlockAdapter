@@ -53,7 +53,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
         for (IMultiSelectItem selectorItem : mData) {
             selectorItem.setChecked(false);
         }
-        notifyDataSetChanged();
+        doNotifyDataSetChanged();
     }
 
     @Override
@@ -61,7 +61,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
         for (IMultiSelectItem selectorItem : mData) {
             selectorItem.setChecked(true);
         }
-        notifyDataSetChanged();
+        doNotifyDataSetChanged();
     }
 
     @Override
@@ -73,7 +73,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
     public List<IMultiSelectItem> getSelectedItems() {
         List<IMultiSelectItem> selectedItems = new ArrayList<>();
         for (IMultiSelectItem selectorItem : mData) {
-            if (selectorItem.isChecked()){
+            if (selectorItem.isChecked() && selectorItem.getCheckableViewId() != View.NO_ID){
                 selectedItems.add(selectorItem);
             }
         }
@@ -89,7 +89,7 @@ public abstract class BaseMultiSelectAdapter extends BaseAdapter<IMultiSelectIte
                 final IMultiSelectItem item = getData(adapterPosition);
                 if (item != null && id == item.getCheckableViewId()){
                     item.setChecked(isChecked);
-                    notifyItemChanged(adapterPosition);
+                    doNotifyItemChanged(adapterPosition);
                 }
                 if (mOnItemCheckedChangeListener != null){
                     mOnItemCheckedChangeListener.onItemCheck(view, isChecked, adapterPosition);
