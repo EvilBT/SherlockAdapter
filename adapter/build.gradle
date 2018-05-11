@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -26,11 +26,11 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
 }
 
-publish {
+/*publish {
     userOrg = 'sherlock'      //bintray注册的用户名
     groupId = 'xyz.zpayh'         //compile引用时的第1部分groupId
     artifactId = 'sherlockadapter'     //compile引用时的第2部分项目名
     publishVersion = '1.1.1'    //compile引用时的第3部分版本号
     desc = 'This is a sherlock adapter extend library'
     website = 'https://github.com/EvilBT/SherlockAdapter'
-}
+}*/

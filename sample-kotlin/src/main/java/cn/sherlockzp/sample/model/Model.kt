@@ -6,6 +6,7 @@ import cn.sherlockzp.adapter.BaseViewHolder
 import cn.sherlockzp.adapter.IExpandable
 import cn.sherlockzp.adapter.IMultiItem
 import cn.sherlockzp.adapter.IMultiSelectItem
+import cn.sherlockzp.sample.BR
 import cn.sherlockzp.sample.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,7 +21,7 @@ data class Text(val text: String,private val _spanSize: Int = 1) : IMultiItem {
     override fun getLayoutRes() = R.layout.item_text
 
     override fun convert(holder: BaseViewHolder) {
-        holder.setText(R.id.text,text)
+        holder.binding?.setVariable(BR.title, text)
     }
 }
 

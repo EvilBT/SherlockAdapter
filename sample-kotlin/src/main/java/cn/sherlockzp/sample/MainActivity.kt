@@ -43,6 +43,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         initData()
+
+        rv_list_activity.postDelayed({
+            adapter.doNotifyItemChanged(1)
+        },1000)
     }
 
     private fun initData() {
