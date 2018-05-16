@@ -1,5 +1,7 @@
 package cn.sherlockzp.adapter
 
+import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -280,8 +282,12 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, layoutRes: Int): BaseViewHolder {
-        val holder = BaseViewHolder(LayoutInflater.from(parent.context)
-                .inflate(layoutRes, parent, false))
+        val db = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(parent.context),
+                layoutRes, parent, false)
+        val holder = if ( db == null )
+            BaseViewHolder(LayoutInflater.from(parent.context).inflate(layoutRes, parent, false))
+        else
+            BaseViewHolder(db)
         holder.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(view: View, adapterPosition: Int) {
                 onItemClickListener?.onItemClick(view, adapterPosition)
