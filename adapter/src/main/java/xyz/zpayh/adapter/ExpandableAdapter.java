@@ -27,6 +27,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -274,7 +275,7 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
                 if (result != -1){
                     return i + 1 + result + showSubSize;
                 }
-                showSubSize = getShowSize(((IExpandable) item).getSubItems());
+                showSubSize += getShowSize(((IExpandable) item).getSubItems());
             }
         }
         return -1;
@@ -1462,5 +1463,32 @@ public abstract class ExpandableAdapter extends RecyclerView.Adapter<BaseViewHol
                 doNotifyItemRangeRemoved(adapterPosition+1,removeSize);
             }
         }
+    }
+
+    public Pair<Integer,IExpandable> findParentData(int adapterPosition) {
+        IMultiItem child = getData(adapterPosition);
+        if (child == null) {
+            return new Pair<>(-1, null);
+        }
+
+        for (int position = adapterPosition -1; position >= 0; position--) {
+            IMultiItem posItem = getData(position);
+            if (posItem == null) {
+                return new Pair<>(-1, null);
+            }
+            if (posItem instanceof IExpandable) {
+                IExpandable expandable = (IExpandable) posItem;
+                if (expandable.isExpandable() && checkIsChild(expandable, child)) {
+                    return new Pair<>(position, expandable);
+                }
+            }
+        }
+
+        return new Pair<>(-1, null);
+    }
+
+    private boolean checkIsChild(IExpandable item, IMultiItem child) {
+        List<IMultiItem> items = item.getSubItems();
+        return items != null && items.contains(child);
     }
 }

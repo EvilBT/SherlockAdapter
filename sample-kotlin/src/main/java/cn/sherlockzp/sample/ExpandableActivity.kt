@@ -2,6 +2,7 @@ package cn.sherlockzp.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.SimpleItemAnimator
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -95,6 +96,27 @@ class ExpandableActivity : AppCompatActivity() {
                 removeDataAt(adapterPosition)
                 return@setOnItemLongClickListener true
             }
+            setItemDiffCallback(object : DiffUtil.ItemCallback<IMultiItem>(){
+                override fun areItemsTheSame(oldItem: IMultiItem?, newItem: IMultiItem?): Boolean {
+                    if (oldItem is ImageLabel && newItem is ImageLabel) {
+                        return oldItem.label == newItem.label
+                    }
+                    if (oldItem is Card && newItem is Card) {
+                        return oldItem.imageResId == newItem.imageResId
+                    }
+                    return false
+                }
+
+                override fun areContentsTheSame(oldItem: IMultiItem?, newItem: IMultiItem?): Boolean {
+                    if (oldItem is ImageLabel && newItem is ImageLabel) {
+                        return true
+                    }
+                    if (oldItem is Card && newItem is Card) {
+                        return oldItem.title == newItem.title
+                    }
+                    return false
+                }
+            })
         }
 
         sr_refresh.setOnRefreshListener {
@@ -104,7 +126,23 @@ class ExpandableActivity : AppCompatActivity() {
     }
 
     private fun refreshData(){
-        initData()
+        val oldData = adapter.data
+
+        val newData = ArrayList(oldData).reversed()
+
+        if (newData.size > 1) {
+            val expandable = newData[1]
+            if (expandable is ImageLabel){
+                expandable.getSubItems()?.reverse()
+            }
+        }
+        if (newData.size > 2) {
+            val expandable = newData[2]
+            if (expandable is ImageLabel){
+                expandable.getSubItems()?.reverse()
+            }
+        }
+        adapter.setData(newData)
     }
 
     private fun initData() {
@@ -168,6 +206,7 @@ class ExpandableActivity : AppCompatActivity() {
                 initData()
                 return true
             }
+            R.id.action_clear -> adapter.setData(null)
         }
         return super.onOptionsItemSelected(item)
     }

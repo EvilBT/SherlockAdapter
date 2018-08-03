@@ -92,7 +92,7 @@ data class NoSelected(val text: String, override var checked: Boolean = false) :
     override fun getCheckableViewId() = View.NO_ID
 }
 
-class ImageLabel(private val label : String) : IExpandable {
+class ImageLabel(val label : String) : IExpandable {
 
     override var expandable = false
 
@@ -113,7 +113,7 @@ class ImageLabel(private val label : String) : IExpandable {
     override fun getSpanSize() = 3
 }
 
-data class Card(private val width: Int,@DrawableRes private val imageResId : Int, val title: String) : IMultiItem {
+data class Card(private val width: Int,@DrawableRes val imageResId : Int, val title: String) : IMultiItem {
     override fun getLayoutRes() = R.layout.item_image_card
 
     override fun convert(holder: BaseViewHolder) {

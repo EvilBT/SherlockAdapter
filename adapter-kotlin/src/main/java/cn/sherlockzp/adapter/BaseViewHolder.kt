@@ -65,6 +65,10 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         }
     }
 
+    fun setVariable(variableId: Int, value: Any?){
+        binding?.setVariable(variableId, value)
+    }
+
     fun setClickable(@IdRes id: Int, clickable: Boolean = true): BaseViewHolder {
         val view = find<View>(id)
         view?.setOnClickListener(if (clickable) onClickListener else null)

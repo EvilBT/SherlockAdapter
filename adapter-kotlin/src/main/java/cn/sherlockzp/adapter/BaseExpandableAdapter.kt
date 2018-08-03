@@ -3,6 +3,9 @@ package cn.sherlockzp.adapter
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.support.annotation.LayoutRes
+import android.support.v7.recyclerview.extensions.AsyncDifferConfig
+import android.support.v7.util.DiffUtil
+import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
@@ -55,11 +58,11 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
     val isShowError get() = showErrorView
 
     @LayoutRes
-    private var emptyLayout = sDefaultViewCreator.getEmptyViewLayout()
+    var emptyLayout = sDefaultViewCreator.getEmptyViewLayout()
     @LayoutRes
-    private var errorLayout = sDefaultViewCreator.getErrorViewLayout()
+    var errorLayout = sDefaultViewCreator.getErrorViewLayout()
     @LayoutRes
-    private var loadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout()
+    var loadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout()
 
     var onLoadMoreListener: OnLoadMoreListener? = null
     private var openAutoLoadMore = false
@@ -95,6 +98,16 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
 
     private var recyclerView: RecyclerView? = null
 
+    private var helper: AsyncListDiffer? = null
+
+    fun setItemDiffCallback(diffCallback: DiffUtil.ItemCallback<IMultiItem>?) {
+        diffCallback?.let {
+            helper = AsyncListDiffer(it)
+        }?:let {
+            helper = null
+        }
+    }
+
     fun setData(data: List<IMultiItem>?) {
 
         if (openAutoLoadMore) {
@@ -103,12 +116,14 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
         }
         showErrorView = false
 
-        this.data.clear()
-        data?.let {
-            this.data.addAll(it)
-        }
-
-        doNotifyDataSetChanged()
+        helper?.submitList(data)
+                ?:let {
+                    this.data.clear()
+                    data?.let {
+                        this.data.addAll(it)
+                    }
+                    doNotifyDataSetChanged()
+                }
     }
 
     fun addData(data: IMultiItem) {
@@ -159,15 +174,15 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
         var showSubSize = 0
         for (i in list.indices) {
             val item = list[i]
-            if (item == data) {
+            if (item === data) {
                 return i + showSubSize
             }
             if (item is IExpandable && item.expandable) {
                 val result = findData(item.getSubItems(), data)
-                if (result == -1) {
+                if (result != -1) {
                     return i + 1 + result + showSubSize
                 }
-                showSubSize = getShowDataSize(item.getSubItems())
+                showSubSize += getShowDataSize(item.getSubItems())
             }
         }
 
@@ -872,6 +887,146 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
             if (removeSize > 0) {
                 doNotifyItemRangeRemoved(adapterPosition + 1, removeSize)
             }
+        }
+    }
+
+    /**
+     * 通过子item的position找到它的父级item
+     * @return 返回键值对(position, item)，如果找到确实是有父级item,则是对应的position及引用
+     * 否则返回(-1，null)
+     */
+    fun findParentData(adapterPosition: Int): Pair<Int,IExpandable?> {
+        val child = getData(adapterPosition) ?: return Pair(-1, null)
+
+        for (position in adapterPosition-1 downTo 0) {
+            val posItem = getData(position) ?: return Pair(-1, null)
+            if (posItem is IExpandable && posItem.expandable) {
+                if (checkIsChild(posItem, child)) {
+                    return Pair(position, posItem)
+                }
+            }
+        }
+
+        return Pair(-1, null)
+    }
+
+    private fun checkIsChild(item: IExpandable, child: IMultiItem): Boolean {
+        return item.getSubItems()?.contains(child)?:false
+        /*item.getSubItems()?.forEach {
+            if (it == child) {
+                return true
+            }
+        }
+        return false*/
+    }
+
+
+    inner class AsyncListDiffer(diffCallback: DiffUtil.ItemCallback<IMultiItem>) {
+        private val config: AsyncDifferConfig<IMultiItem> = AsyncDifferConfig.Builder(diffCallback).build()
+        private var maxScheduledGeneration = 0
+        private val listUpdateCallback = AdapterListUpdateCallback()
+
+        fun submitList(newList: List<IMultiItem>?) {
+            if (data === newList) {
+                return
+            }
+
+            val runGeneration = ++maxScheduledGeneration
+
+            // fast simple remove all
+            if (newList == null) {
+                if (data.isEmpty()) return
+
+                val position = if (alwaysShowHead) headSize else 0
+                val count = if (!alwaysShowHead && !alwaysShowFoot) data.size + headSize + footSize
+                else if (alwaysShowHead && alwaysShowFoot) data.size
+                else if (!alwaysShowHead) data.size + headSize
+                else data.size + footSize
+                data.clear()
+                doNotifyItemChanged(position)
+                if (count - 1 > 0) {
+                    doNotifyItemRangeRemoved(position + 1, count - 1)
+                }
+                return
+            }
+
+            // fast simple first insert
+            if (data.isEmpty()) {
+                if (newList.isEmpty()) return
+
+                val position = if (alwaysShowHead) headSize else 0
+                val count = if (!alwaysShowHead && !alwaysShowFoot) newList.size + headSize + footSize
+                else if (alwaysShowHead && alwaysShowFoot) newList.size
+                else if (!alwaysShowHead) newList.size + headSize
+                else newList.size + footSize
+
+                data.addAll(newList)
+                doNotifyItemChanged(position)
+                if (count - 1 > 0) {
+                    doNotifyItemRangeInserted(position + 1, count - 1)
+                }
+                return
+            }
+
+            config.backgroundThreadExecutor.execute {
+                val result = DiffUtil.calculateDiff(object : DiffUtil.Callback(){
+                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                        val oldItem = getData(data, oldItemPosition)
+                        val newItem = getData(newList, newItemPosition)
+                        return config.diffCallback.areItemsTheSame(oldItem,newItem)
+                    }
+
+                    override fun getOldListSize() = getShowDataSize(data)
+
+                    override fun getNewListSize() = getShowDataSize(newList)
+
+                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                        val oldItem = getData(data, oldItemPosition)
+                        val newItem = getData(newList, newItemPosition)
+                        return config.diffCallback.areContentsTheSame(oldItem,newItem)
+                    }
+
+                    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                        val oldItem = getData(data, oldItemPosition)
+                        val newItem = getData(newList, newItemPosition)
+                        return config.diffCallback.getChangePayload(oldItem,newItem)
+                    }
+                })
+
+                config.mainThreadExecutor.execute {
+                    if (runGeneration == maxScheduledGeneration) {
+                        // 此时才刷新数据
+                        data.clear()
+                        data.addAll(newList)
+                        result.dispatchUpdatesTo(listUpdateCallback)
+                        if (canAutoLoadMore()) {
+                            doNotifyItemChanged(itemCount - 1)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    inner class AdapterListUpdateCallback : ListUpdateCallback {
+        override fun onChanged(position: Int, count: Int, payload: Any?) {
+            val skew = headSize
+            doNotifyItemRangeChanged(skew, count)
+        }
+
+        override fun onMoved(fromPosition: Int, toPosition: Int) {
+            val skew = headSize
+            doNotifyItemMoved(fromPosition + skew, toPosition + skew)
+        }
+
+        override fun onInserted(position: Int, count: Int) {
+            val skew = headSize
+            doNotifyItemRangeInserted(position + skew, count)
+        }
+
+        override fun onRemoved(position: Int, count: Int) {
+            val skew = headSize
+            doNotifyItemRangeRemoved(position + skew, count)
         }
     }
 }
