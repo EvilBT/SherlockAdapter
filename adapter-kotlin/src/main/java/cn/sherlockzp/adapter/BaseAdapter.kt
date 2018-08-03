@@ -1,14 +1,17 @@
 package cn.sherlockzp.adapter
 
+import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.support.annotation.LayoutRes
+import android.support.v7.recyclerview.extensions.AsyncDifferConfig
+import android.support.v7.util.DiffUtil
+import android.support.v7.util.ListUpdateCallback
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import java.util.*
-import kotlin.collections.ArrayList
 
 abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
 
@@ -52,11 +55,11 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
     val isShowError get() = showErrorView
 
     @LayoutRes
-    private var emptyLayout = sDefaultViewCreator.getEmptyViewLayout()
+    var emptyLayout = sDefaultViewCreator.getEmptyViewLayout()
     @LayoutRes
-    private var errorLayout = sDefaultViewCreator.getErrorViewLayout()
+    var errorLayout = sDefaultViewCreator.getErrorViewLayout()
     @LayoutRes
-    private var loadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout()
+    var loadMoreLayout = sDefaultViewCreator.getLoadMoreViewLayout()
 
     var onLoadMoreListener: OnLoadMoreListener? = null
     private var openAutoLoadMore = false
@@ -92,6 +95,16 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
 
     private var recyclerView: RecyclerView? = null
 
+    private var helper: AsyncListDiffer? = null
+
+    fun setItemDiffCallback(diffCallback: DiffUtil.ItemCallback<T>?) {
+        diffCallback?.let {
+            helper = AsyncListDiffer(it)
+        }?:let {
+            helper = null
+        }
+    }
+
     fun setData(data: List<T>?) {
 
         if (openAutoLoadMore) {
@@ -100,12 +113,14 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
         }
         showErrorView = false
 
-        this.data.clear()
-        data?.let {
-            this.data.addAll(it)
-        }
-
-        doNotifyDataSetChanged()
+        helper?.submitList(data)
+                ?:let {
+                    this.data.clear()
+                    data?.let {
+                        this.data.addAll(it)
+                    }
+                    doNotifyDataSetChanged()
+                }
     }
 
     fun addData(data: T) {
@@ -195,8 +210,16 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, layoutRes: Int): BaseViewHolder {
-        val holder = BaseViewHolder(LayoutInflater.from(parent.context)
-                .inflate(layoutRes, parent, false))
+
+        val db = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(parent.context),
+                layoutRes, parent, false)
+        val holder = if ( db == null )
+            BaseViewHolder(LayoutInflater.from(parent.context).inflate(layoutRes, parent, false))
+                    else
+            BaseViewHolder(db)
+
+        /*val holder = BaseViewHolder(LayoutInflater.from(parent.context)
+                .inflate(layoutRes, parent, false))*/
         holder.setOnItemClickListener(object : OnItemClickListener{
             override fun onItemClick(view: View, adapterPosition: Int) {
                 onItemClickListener?.onItemClick(view, adapterPosition)
@@ -530,7 +553,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
         notifyDataSetChanged()
     }
 
-    fun doNotifyItemChanged(position: Int, payload: Objects? = null) {
+    fun doNotifyItemChanged(position: Int, payload: Any? = null) {
         recyclerView?.let {
             if (it.isComputingLayout) {
                 it.post { notifyItemChanged(position, payload) }
@@ -540,7 +563,7 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
         notifyItemChanged(position, payload)
     }
 
-    fun doNotifyItemRangeChanged(positionStart: Int, itemCount: Int, payload: Objects? = null) {
+    fun doNotifyItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any? = null) {
         recyclerView?.let {
             if (it.isComputingLayout) {
                 it.post { notifyItemRangeChanged(positionStart, itemCount, payload) }
@@ -646,6 +669,110 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
 
     companion object {
         var sDefaultViewCreator = object : DefaultViewCreator {
+        }
+    }
+
+    inner class AsyncListDiffer(diffCallback: DiffUtil.ItemCallback<T>) {
+        private val config: AsyncDifferConfig<T> = AsyncDifferConfig.Builder(diffCallback).build()
+        private var maxScheduledGeneration = 0
+        private val listUpdateCallback = AdapterListUpdateCallback()
+
+        fun submitList(newList: List<T>?) {
+            if (data === newList) {
+                return
+            }
+
+            val runGeneration = ++maxScheduledGeneration
+
+            // fast simple remove all
+            if (newList == null) {
+                if (data.isEmpty()) return
+
+                val position = if (alwaysShowHead) headSize else 0
+                val count = if (!alwaysShowHead && !alwaysShowFoot) data.size + headSize + footSize
+                            else if (alwaysShowHead && alwaysShowFoot) data.size
+                            else if (!alwaysShowHead) data.size + headSize
+                            else data.size + footSize
+
+                data.clear()
+                doNotifyItemChanged(position)
+                if (count - 1 > 0) {
+                    doNotifyItemRangeRemoved(position + 1, count - 1)
+                }
+                return
+            }
+
+            // fast simple first insert
+            if (data.isEmpty()) {
+                if (newList.isEmpty()) return
+
+                val position = if (alwaysShowHead) headSize else 0
+                val count = if (!alwaysShowHead && !alwaysShowFoot) newList.size + headSize + footSize
+                            else if (alwaysShowHead && alwaysShowFoot) newList.size
+                            else if (!alwaysShowHead) newList.size + headSize
+                            else newList.size + footSize
+
+                data.addAll(newList)
+                doNotifyItemChanged(position)
+                if (count - 1 > 0) {
+                    doNotifyItemRangeInserted(position + 1, count - 1)
+                }
+                return
+            }
+
+            config.backgroundThreadExecutor.execute {
+                val result = DiffUtil.calculateDiff(object : DiffUtil.Callback(){
+                    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                        return config.diffCallback.areItemsTheSame(data[oldItemPosition],newList[newItemPosition])
+                    }
+
+                    override fun getOldListSize() = data.size
+
+                    override fun getNewListSize() = newList.size
+
+                    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                        return config.diffCallback.areContentsTheSame(data[oldItemPosition],newList[newItemPosition])
+                    }
+
+                    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                        return config.diffCallback.getChangePayload(data[oldItemPosition],newList[newItemPosition])
+                    }
+                })
+
+                config.mainThreadExecutor.execute {
+                    if (runGeneration == maxScheduledGeneration) {
+                        // 此时才刷新数据
+                        data.clear()
+                        data.addAll(newList)
+                        result.dispatchUpdatesTo(listUpdateCallback)
+                        if (canAutoLoadMore()) {
+                            doNotifyItemChanged(itemCount - 1)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    inner class AdapterListUpdateCallback : ListUpdateCallback {
+        override fun onChanged(position: Int, count: Int, payload: Any?) {
+            val skew = headSize
+            doNotifyItemRangeChanged(position + skew, count)
+        }
+
+        override fun onMoved(fromPosition: Int, toPosition: Int) {
+            val skew = headSize
+            doNotifyItemMoved(fromPosition + skew, toPosition + skew)
+        }
+
+        override fun onInserted(position: Int, count: Int) {
+            val skew = headSize
+            doNotifyItemRangeInserted(position + skew, count)
+        }
+
+        override fun onRemoved(position: Int, count: Int) {
+            val skew = headSize
+            doNotifyItemRangeRemoved(position + skew, count)
         }
     }
 }

@@ -1,5 +1,6 @@
 package cn.sherlockzp.adapter
 
+import android.databinding.ViewDataBinding
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -16,6 +17,12 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     private val viewMaps = HashMap<Int,View>()
+
+    var binding: ViewDataBinding? = null
+
+    constructor(binding: ViewDataBinding) : this(binding.root) {
+        this.binding = binding
+    }
 
     private lateinit var onItemClickListener: OnItemClickListener
 
@@ -56,6 +63,10 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         if (initLongClickListener.compareAndSet(false, true)) {
             itemView.setOnLongClickListener(onLongClickListener)
         }
+    }
+
+    fun setVariable(variableId: Int, value: Any?){
+        binding?.setVariable(variableId, value)
     }
 
     fun setClickable(@IdRes id: Int, clickable: Boolean = true): BaseViewHolder {

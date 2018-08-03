@@ -26,6 +26,7 @@
 
     <string name="action_use_grid">GridLayoutManager</string>
     <string name="action_ues_staggered">StaggeredGridLayoutManager</string>
+    <string name="action_clear">清空数据</string>
 
     <string name="github">https://github.com/EvilBT/SherlockAdapter</string>
     <string name="title_activity_multi_item">多布局</string>

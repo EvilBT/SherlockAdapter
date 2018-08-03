@@ -11,4 +11,10 @@
         android:orderInCategory="100"
         android:title="@string/action_ues_staggered"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_clear"
+        android:orderInCategory="100"
+        android:title="@string/action_clear"
+        app:showAsAction="never"/>
 </menu>

@@ -6,6 +6,7 @@ import cn.sherlockzp.adapter.BaseViewHolder
 import cn.sherlockzp.adapter.IExpandable
 import cn.sherlockzp.adapter.IMultiItem
 import cn.sherlockzp.adapter.IMultiSelectItem
+import cn.sherlockzp.sample.BR
 import cn.sherlockzp.sample.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,7 +21,7 @@ data class Text(val text: String,private val _spanSize: Int = 1) : IMultiItem {
     override fun getLayoutRes() = R.layout.item_text
 
     override fun convert(holder: BaseViewHolder) {
-        holder.setText(R.id.text,text)
+        holder.binding?.setVariable(BR.title, text)
     }
 }
 
@@ -91,7 +92,7 @@ data class NoSelected(val text: String, override var checked: Boolean = false) :
     override fun getCheckableViewId() = View.NO_ID
 }
 
-class ImageLabel(private val label : String) : IExpandable {
+class ImageLabel(val label : String) : IExpandable {
 
     override var expandable = false
 
@@ -112,7 +113,7 @@ class ImageLabel(private val label : String) : IExpandable {
     override fun getSpanSize() = 3
 }
 
-data class Card(private val width: Int,@DrawableRes private val imageResId : Int, val title: String) : IMultiItem {
+data class Card(private val width: Int,@DrawableRes val imageResId : Int, val title: String) : IMultiItem {
     override fun getLayoutRes() = R.layout.item_image_card
 
     override fun convert(holder: BaseViewHolder) {
