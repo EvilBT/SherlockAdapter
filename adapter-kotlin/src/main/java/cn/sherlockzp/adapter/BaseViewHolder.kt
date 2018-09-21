@@ -65,8 +65,9 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         }
     }
 
-    fun setVariable(variableId: Int, value: Any?){
+    fun setVariable(variableId: Int, value: Any?): BaseViewHolder {
         binding?.setVariable(variableId, value)
+        return this
     }
 
     fun setClickable(@IdRes id: Int, clickable: Boolean = true): BaseViewHolder {

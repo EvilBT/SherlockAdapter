@@ -13,6 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.zpayh.adapter.BaseViewHolder;
 import xyz.zpayh.adapter.DiffUtilCallback;
 import xyz.zpayh.myadapter.adapter.HeadAndFootAdapter;
 import xyz.zpayh.myadapter.data.ImageCard;
@@ -25,6 +26,8 @@ public class HeadAndFootActivity extends AppCompatActivity {
     private int mImageResId[] = {R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset};
 
     private HeadAndFootAdapter mAdapter;
+
+    private BaseViewHolder mHeadHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,23 @@ public class HeadAndFootActivity extends AppCompatActivity {
         mAdapter.addHeadLayout(R.layout.item_head);
         mAdapter.addFootLayout(R.layout.item_foot);
         mAdapter.addFootLayout(R.layout.item_foot2);
+
+        mAdapter.setOnBindListener(new HeadAndFootAdapter.OnBindListener() {
+            @Override
+            public void onBind(BaseViewHolder holder, int layoutRes) {
+                if (layoutRes == R.layout.item_head) {
+                    mHeadHolder = holder;
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mHeadHolder != null) {
+                                mHeadHolder.setText(R.id.tv_head,"这确实是头部");
+                            }
+                        }
+                    });
+                }
+            }
+        });
 
         List<ImageCard> data = new ArrayList<>();
 

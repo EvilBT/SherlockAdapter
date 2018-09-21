@@ -24,8 +24,14 @@ public class HeadAndFootAdapter extends BaseAdapter<ImageCard> {
 
     private int mWidth;
 
+    private OnBindListener mOnBindListener;
+
     public HeadAndFootAdapter(Context context) {
         mWidth = context.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    public void setOnBindListener(OnBindListener onBindListener) {
+        this.mOnBindListener = onBindListener;
     }
 
     @Override
@@ -41,7 +47,9 @@ public class HeadAndFootAdapter extends BaseAdapter<ImageCard> {
 
     @Override
     public void bind(BaseViewHolder holder, int layoutRes) {
-
+        if (mOnBindListener != null) {
+            mOnBindListener.onBind(holder, layoutRes);
+        }
     }
 
     @Override
@@ -52,5 +60,9 @@ public class HeadAndFootAdapter extends BaseAdapter<ImageCard> {
     @Override
     public void convertFoot(BaseViewHolder holder, @LayoutRes int footLayout, int index) {
         holder.setText(R.id.tv_foot,"This is Foot Layout");
+    }
+
+    public interface OnBindListener {
+        void onBind(BaseViewHolder holder, int layoutRes);
     }
 }
