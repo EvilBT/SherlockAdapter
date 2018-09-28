@@ -97,7 +97,7 @@ class ExpandableActivity : AppCompatActivity() {
                 return@setOnItemLongClickListener true
             }
             setItemDiffCallback(object : DiffUtil.ItemCallback<IMultiItem>(){
-                override fun areItemsTheSame(oldItem: IMultiItem?, newItem: IMultiItem?): Boolean {
+                override fun areItemsTheSame(oldItem: IMultiItem, newItem: IMultiItem): Boolean {
                     if (oldItem is ImageLabel && newItem is ImageLabel) {
                         return oldItem.label == newItem.label
                     }
@@ -107,7 +107,7 @@ class ExpandableActivity : AppCompatActivity() {
                     return false
                 }
 
-                override fun areContentsTheSame(oldItem: IMultiItem?, newItem: IMultiItem?): Boolean {
+                override fun areContentsTheSame(oldItem: IMultiItem, newItem: IMultiItem): Boolean {
                     if (oldItem is ImageLabel && newItem is ImageLabel) {
                         return true
                     }

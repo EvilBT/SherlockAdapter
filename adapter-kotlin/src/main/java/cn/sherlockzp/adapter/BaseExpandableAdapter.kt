@@ -2,6 +2,8 @@ package cn.sherlockzp.adapter
 
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.os.Handler
+import android.os.Looper
 import android.support.annotation.LayoutRes
 import android.support.v7.recyclerview.extensions.AsyncDifferConfig
 import android.support.v7.util.DiffUtil
@@ -15,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import cn.sherlockzp.adapter.BaseAdapter.Companion.sDefaultViewCreator
 import java.util.*
+import java.util.concurrent.Executors
 
 open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
 
@@ -27,6 +30,10 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
     private val footLayoutConfigs = ArrayList<LayoutConfig>()
     val footSize get() = footLayoutConfigs.size
     val hasFoot get() = footLayoutConfigs.isNotEmpty()
+
+
+    private val mainThreadExecutor = Handler(Looper.getMainLooper())
+    private val backgroundThreadExecutor = Executors.newSingleThreadExecutor()
 
     var alwaysShowHead = false
         set(value) {
@@ -968,7 +975,7 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
                 return
             }
 
-            config.backgroundThreadExecutor.execute {
+            backgroundThreadExecutor.execute {
                 val result = DiffUtil.calculateDiff(object : DiffUtil.Callback(){
                     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                         val oldItem = getData(data, oldItemPosition)
@@ -993,7 +1000,7 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
                     }
                 })
 
-                config.mainThreadExecutor.execute {
+                mainThreadExecutor.post {
                     if (runGeneration == maxScheduledGeneration) {
                         // 此时才刷新数据
                         data.clear()

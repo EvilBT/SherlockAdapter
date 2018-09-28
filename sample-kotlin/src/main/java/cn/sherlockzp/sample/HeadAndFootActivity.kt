@@ -26,12 +26,12 @@ class HeadAndFootActivity : AppCompatActivity() {
     private val imageResIds = arrayOf(R.drawable.adult, R.drawable.easter_eggs, R.drawable.girl, R.drawable.sunset)
 
     private val callback = object : DiffUtil.ItemCallback<ImageCard>(){
-        override fun areItemsTheSame(oldItem: ImageCard?, newItem: ImageCard?): Boolean {
-            return oldItem?.imageResId == newItem?.imageResId
+        override fun areItemsTheSame(oldItem: ImageCard, newItem: ImageCard): Boolean {
+            return oldItem.imageResId == newItem.imageResId
         }
 
-        override fun areContentsTheSame(oldItem: ImageCard?, newItem: ImageCard?): Boolean {
-            return oldItem?.title == newItem?.title
+        override fun areContentsTheSame(oldItem: ImageCard, newItem: ImageCard): Boolean {
+            return oldItem.title == newItem.title
         }
     }
 
