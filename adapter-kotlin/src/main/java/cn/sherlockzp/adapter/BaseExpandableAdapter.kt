@@ -531,7 +531,7 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
             lp.isFullSpan = footLayoutConfigs[index].fullSpan
             return
         }
-        if (index > 0) {
+        if (index >= footSize) {
             lp.isFullSpan = true
             return
         }
@@ -581,7 +581,7 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
                     return getSpanCountFromConfig(config, manager)
                 }
 
-                if (index >= 0) {
+                if (index >= footSize) {
                     // 显示加载更多
                     return manager.spanCount
                 }
