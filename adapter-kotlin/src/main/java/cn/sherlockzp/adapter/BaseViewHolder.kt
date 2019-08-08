@@ -1,13 +1,14 @@
 package cn.sherlockzp.adapter
 
-import android.databinding.ViewDataBinding
+import androidx.databinding.ViewDataBinding
 import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.annotation.DrawableRes
-import android.support.annotation.IdRes
-import android.support.annotation.StringRes
-import android.support.v7.widget.RecyclerView
+import android.util.SparseArray
+import androidx.annotation.DrawableRes
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.Checkable
 import android.widget.ImageView
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 
 class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-    private val viewMaps = HashMap<Int,View>()
+    private val viewMaps = SparseArray<View>()
 
     var binding: ViewDataBinding? = null
 
@@ -153,7 +154,7 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     }
 
     fun <T : View> find(@IdRes id: Int): T? {
-        if(viewMaps.containsKey(id)){
+        if(viewMaps.indexOfKey(id) > 0){
             @Suppress("UNCHECKED_CAST")
             return viewMaps[id] as T
         }

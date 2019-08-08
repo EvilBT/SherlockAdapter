@@ -2,9 +2,9 @@ package cn.sherlockzp.sample
 
 import android.os.Bundle
 import android.app.Activity
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -61,7 +61,7 @@ class HeadAndFootActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_head_and_foot)
 
-        rv_list_girls.layoutManager = LinearLayoutManager(this)
+        rv_list_girls.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rv_list_girls.adapter = adapter
 
         initAdapter()

@@ -1,8 +1,8 @@
 package cn.sherlockzp.sample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import cn.sherlockzp.adapter.BaseAdapter
 import cn.sherlockzp.adapter.BaseExpandableAdapter
@@ -67,7 +67,7 @@ class AutoLoadMoreActivity : AppCompatActivity() , View.OnClickListener{
     }
 
     private fun initView(){
-        rv_list_load_more.layoutManager = LinearLayoutManager(this)
+        rv_list_load_more.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rv_list_load_more.adapter = adapter
 
         with(adapter) {

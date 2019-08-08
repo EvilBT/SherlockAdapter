@@ -16,7 +16,7 @@
 
 package xyz.zpayh.adapter;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 
 import java.util.ArrayList;
 import java.util.List;

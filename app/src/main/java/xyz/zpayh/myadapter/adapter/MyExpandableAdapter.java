@@ -1,6 +1,6 @@
 package xyz.zpayh.myadapter.adapter;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 
 import xyz.zpayh.adapter.BaseViewHolder;
 import xyz.zpayh.adapter.ExpandableAdapter;

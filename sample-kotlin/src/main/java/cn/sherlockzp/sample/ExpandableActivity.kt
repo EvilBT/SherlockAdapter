@@ -1,11 +1,11 @@
 package cn.sherlockzp.sample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.SimpleItemAnimator
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import cn.sherlockzp.adapter.*
@@ -43,10 +43,10 @@ class ExpandableActivity : AppCompatActivity() {
     }
 
     private val gridLayoutManager by lazy {
-        GridLayoutManager(this,2)
+        androidx.recyclerview.widget.GridLayoutManager(this, 2)
     }
     private val staggeredGridLayoutManager by lazy {
-        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL)
     }
     private var isGrid = false
 
@@ -62,7 +62,7 @@ class ExpandableActivity : AppCompatActivity() {
         rv_list_expand.layoutManager = staggeredGridLayoutManager
         rv_list_expand.adapter = adapter
         val animator = rv_list_expand.itemAnimator
-        if (animator is SimpleItemAnimator) {
+        if (animator is androidx.recyclerview.widget.SimpleItemAnimator) {
             animator.supportsChangeAnimations = false
         }
 

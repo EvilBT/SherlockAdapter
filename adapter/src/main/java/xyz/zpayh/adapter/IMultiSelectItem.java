@@ -16,7 +16,7 @@
 
 package xyz.zpayh.adapter;
 
-import android.support.annotation.IdRes;
+import androidx.annotation.IdRes;
 
 /**
  * 文 件 名: IMultiSelectItem

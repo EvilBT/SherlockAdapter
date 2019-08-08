@@ -16,7 +16,7 @@
 
 package xyz.zpayh.adapter;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 
 /**
  * 文 件 名: DefaultMultiItem

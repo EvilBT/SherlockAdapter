@@ -1,7 +1,7 @@
 package xyz.zpayh.myadapter.data;
 
 import android.graphics.Point;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 import android.util.Log;
 
 import com.facebook.drawee.view.SimpleDraweeView;

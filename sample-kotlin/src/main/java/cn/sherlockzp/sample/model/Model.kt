@@ -1,6 +1,6 @@
 package cn.sherlockzp.sample.model
 
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import android.view.View
 import cn.sherlockzp.adapter.BaseViewHolder
 import cn.sherlockzp.adapter.IExpandable

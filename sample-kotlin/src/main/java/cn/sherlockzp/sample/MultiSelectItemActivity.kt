@@ -1,9 +1,9 @@
 package cn.sherlockzp.sample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.SimpleItemAnimator
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import android.widget.Toast
 import cn.sherlockzp.adapter.BaseMultiSelectAdapter
 import cn.sherlockzp.adapter.BaseViewHolder
@@ -31,11 +31,11 @@ class MultiSelectItemActivity : AppCompatActivity() {
 
     private fun initView() {
         with(rv_list_multi_select) {
-            layoutManager = GridLayoutManager(this@MultiSelectItemActivity, 3)
+            layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@MultiSelectItemActivity, 3)
             adapter = this@MultiSelectItemActivity.adapter
         }
         val animator = rv_list_multi_select.itemAnimator
-        if (animator is SimpleItemAnimator)
+        if (animator is androidx.recyclerview.widget.SimpleItemAnimator)
             animator.supportsChangeAnimations = false
 
         adapter.setOnItemCheckChangeListener { view, isChecked, adapterPosition ->

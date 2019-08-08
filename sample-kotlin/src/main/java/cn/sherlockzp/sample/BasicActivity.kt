@@ -2,10 +2,10 @@ package cn.sherlockzp.sample
 
 import android.os.Bundle
 import android.app.Activity
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -24,11 +24,11 @@ class BasicActivity : AppCompatActivity() {
     private val data = ArrayList<IMultiItem>()
 
     private val gridLayoutManager by lazy {
-        GridLayoutManager(this,3)
+        androidx.recyclerview.widget.GridLayoutManager(this, 3)
     }
 
     private val staggeredGridLayoutManager by lazy {
-        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL)
     }
 
     private var isGrid = true

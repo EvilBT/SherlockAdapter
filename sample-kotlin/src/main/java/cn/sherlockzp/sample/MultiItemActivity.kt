@@ -1,10 +1,10 @@
 package cn.sherlockzp.sample
 
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import cn.sherlockzp.adapter.BaseExpandableAdapter
@@ -18,11 +18,11 @@ import kotlinx.android.synthetic.main.activity_multi_item.*
 class MultiItemActivity : AppCompatActivity() {
 
     private val gridLayoutManager by lazy {
-        GridLayoutManager(this,3)
+        androidx.recyclerview.widget.GridLayoutManager(this, 3)
     }
 
     private val staggeredGridLayoutManager by lazy {
-        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL)
     }
 
     private val adapter = BaseMultiAdapter() //BaseExpandableAdapter()

@@ -4,6 +4,7 @@
 [![](https://jitpack.io/v/EvilBT/SherlockAdapter.svg)](https://jitpack.io/#EvilBT/SherlockAdapter)
 
 ## 新增功能
+- 2019-08-09 支持AndroidX
 - 2017-04-26 添加控制头部尾部在瀑布流或者网格布局时横跨布局的开关及spanSize的大小
 - 2017-04-13 添加保持显示头部尾部开关，在显示Error布局或者Empty布局时也能选择显示头部与尾部功能
 - 2017-04-12 添加DiffUtil支持，添加StaggeredGridLayout的混合布局实现
@@ -29,14 +30,14 @@
 先说注意事项，一般来讲，由于SherlockAdapter采用LayoutRes的值来作为ItemViewType返回，而ItemViewType是用来区分不同的Item的，所以如果不是同种Item，就不要使用同一个Layout文件，例如头部HeadLayout跟ItemLayout的布局是一样的情况下，就复制多一个Layout出来就行，不要共用一个Layout。
 
 ## 兼容性
-- 最低的Android SDK: SherlockAdapter 1.1.2 要求最低API级别为9.
+- 最低的Android SDK: SherlockAdapter 2.0.0 要求最低API级别为9.
 ## 开始配置
 **Step 1.**  Add the dependency
 ``` gradle
 dependencies {
-    implementation 'xyz.zpayh:sherlockadapter:1.1.2'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'xyz.zpayh:sherlockadapter:2.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }
 ```
 

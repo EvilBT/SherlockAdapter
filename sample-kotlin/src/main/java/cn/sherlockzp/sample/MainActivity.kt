@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import cn.sherlockzp.adapter.BaseAdapter
 import cn.sherlockzp.adapter.BaseViewHolder
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rv_list_activity.layoutManager = LinearLayoutManager(this)
+        rv_list_activity.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         rv_list_activity.adapter = adapter
 
         adapter.onItemClickListener = object : OnItemClickListener{

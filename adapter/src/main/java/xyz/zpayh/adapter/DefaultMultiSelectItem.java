@@ -16,8 +16,8 @@
 
 package xyz.zpayh.adapter;
 
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.LayoutRes;
 
 import static android.view.View.NO_ID;
 

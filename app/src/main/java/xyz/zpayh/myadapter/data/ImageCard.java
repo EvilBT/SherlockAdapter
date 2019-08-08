@@ -1,6 +1,6 @@
 package xyz.zpayh.myadapter.data;
 
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 /**
  * 文 件 名: ImageCard

@@ -16,9 +16,9 @@
 
 package xyz.zpayh.adapter;
 
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 文 件 名: IMultiItem
@@ -46,7 +46,7 @@ public interface IMultiItem {
     void convert(BaseViewHolder holder);
 
     /**
-     * 在布局为{@link android.support.v7.widget.GridLayoutManager}时才有用处，
+     * 在布局为{@link GridLayoutManager}时才有用处，
      * 返回当前布局所占用的SpanSize
      * @return 如果返回的SpanSize 小于或等于 0 或者 大于 {@link GridLayoutManager#getSpanCount()}
      *  则{@link BaseAdapter} 会在{@link BaseAdapter#onAttachedToRecyclerView(RecyclerView)}
