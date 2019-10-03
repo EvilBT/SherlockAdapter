@@ -21,7 +21,7 @@ data class Text(val text: String,private val _spanSize: Int = 1) : IMultiItem {
     override fun getLayoutRes() = R.layout.item_text
 
     override fun convert(holder: BaseViewHolder) {
-        holder.binding?.setVariable(BR.title, text)
+        holder.setVariable(BR.title, text)
     }
 }
 
@@ -81,7 +81,7 @@ data class NoSelected(val text: String, override var checked: Boolean = false) :
      * @param holder Holder Helper
      */
     override fun convert(holder: BaseViewHolder) {
-        holder.setText(R.id.tv_tips, text)
+        holder.setText(R.id.tv_tips, null)
     }
 
     /**

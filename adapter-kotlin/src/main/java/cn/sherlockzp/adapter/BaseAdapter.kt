@@ -129,23 +129,40 @@ abstract class BaseAdapter<T> : RecyclerView.Adapter<BaseViewHolder>(){
                 }
     }
 
-    fun addData(data: T) {
+    fun addData(data: T?, adapterPosition: Int = -1) {
+        data?:return
+        if (adapterPosition == -1 || adapterPosition >= this.data.size + headSize) {
+            val startPos = this.data.size + headSize
+            val itemCount = 1 + footSize + if (canAutoLoadMore()) 1 else 0
 
-        val startPos = this.data.size + headSize
-        val itemCount = 1 + footSize + if (canAutoLoadMore()) 1 else 0
+            this.data.add(data)
 
-        this.data.add(data)
+            if (openAutoLoadMore) {
+                loadState = LoadState.LOADING
+                isLoading = false
+            }
+            showErrorView = false
 
-        if (openAutoLoadMore) {
-            loadState = LoadState.LOADING
-            isLoading = false
+            doNotifyItemRangeChanged(startPos, itemCount)
+        } else {
+            val position = if (adapterPosition < headSize) 0 else adapterPosition - headSize
+            val startPos = this.data.size + headSize
+            val itemCount = footSize + if (canAutoLoadMore()) 1 else 0
+
+            this.data.add(position, data)
+
+            if (openAutoLoadMore) {
+                loadState = LoadState.LOADING
+                isLoading = false
+            }
+            showErrorView = false
+            doNotifyItemInserted(position)
+            doNotifyItemRangeChanged(startPos, itemCount)
         }
-        showErrorView = false
-
-        doNotifyItemRangeChanged(startPos, itemCount)
     }
 
-    fun addData(data: List<T>) {
+    fun addData(data: List<T>?) {
+        data?:return
         val startPos = this.data.size + headSize
         val itemCount = data.size + footSize + if (canAutoLoadMore()) 1 else 0
 

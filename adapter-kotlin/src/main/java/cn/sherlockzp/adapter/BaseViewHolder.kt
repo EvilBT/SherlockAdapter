@@ -99,12 +99,15 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         return this
     }
 
-    fun setText(@IdRes id: Int, text: String): BaseViewHolder {
+    fun setText(@IdRes id: Int, text: String?): BaseViewHolder {
         findText(id)?.text = text
         return this
     }
 
     fun setText(@IdRes id: Int, @StringRes strRes: Int) = setText(id, itemView.resources.getString(strRes))
+
+    fun setText(@IdRes id: Int, @StringRes strRes: Int,vararg formatArgs: Any)
+        = setText(id, itemView.resources.getString(strRes, formatArgs))
 
     fun setText(@IdRes id: Int, callback: TextCallback) = setView(id, callback)
 

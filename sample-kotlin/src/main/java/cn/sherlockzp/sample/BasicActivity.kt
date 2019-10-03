@@ -24,11 +24,11 @@ class BasicActivity : AppCompatActivity() {
     private val data = ArrayList<IMultiItem>()
 
     private val gridLayoutManager by lazy {
-        androidx.recyclerview.widget.GridLayoutManager(this, 3)
+        GridLayoutManager(this, 3)
     }
 
     private val staggeredGridLayoutManager by lazy {
-        androidx.recyclerview.widget.StaggeredGridLayoutManager(2, androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL)
+        StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
     }
 
     private var isGrid = true

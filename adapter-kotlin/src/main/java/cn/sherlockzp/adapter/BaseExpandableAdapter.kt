@@ -133,8 +133,8 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
                 }
     }
 
-    fun addData(data: IMultiItem) {
-
+    fun addData(data: IMultiItem?) {
+        data?:return
         val startPos = getShowDataSize() + headSize
         var itemCount = 1 + footSize + if (canAutoLoadMore()) 1 else 0
         if ( data is IExpandable && data.expandable) {
@@ -152,7 +152,8 @@ open class BaseExpandableAdapter : RecyclerView.Adapter<BaseViewHolder>(){
         doNotifyItemRangeChanged(startPos, itemCount)
     }
 
-    fun addData(data: List<IMultiItem>) {
+    fun addData(data: List<IMultiItem>?) {
+        data?:return
         val startPos = getShowDataSize() + headSize
         val itemCount = getShowDataSize(data) + footSize + if (canAutoLoadMore()) 1 else 0
 

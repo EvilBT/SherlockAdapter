@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rv_list_activity.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        rv_list_activity.layoutManager = LinearLayoutManager(this)
         rv_list_activity.adapter = adapter
 
         adapter.onItemClickListener = object : OnItemClickListener{

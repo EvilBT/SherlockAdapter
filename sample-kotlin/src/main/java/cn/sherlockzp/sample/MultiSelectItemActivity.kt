@@ -31,11 +31,11 @@ class MultiSelectItemActivity : AppCompatActivity() {
 
     private fun initView() {
         with(rv_list_multi_select) {
-            layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@MultiSelectItemActivity, 3)
+            layoutManager = GridLayoutManager(this@MultiSelectItemActivity, 3)
             adapter = this@MultiSelectItemActivity.adapter
         }
         val animator = rv_list_multi_select.itemAnimator
-        if (animator is androidx.recyclerview.widget.SimpleItemAnimator)
+        if (animator is SimpleItemAnimator)
             animator.supportsChangeAnimations = false
 
         adapter.setOnItemCheckChangeListener { view, isChecked, adapterPosition ->
@@ -75,6 +75,11 @@ class MultiSelectItemActivity : AppCompatActivity() {
         bt_get_all_select.setOnClickListener {
             // 拿到选中的
             Toast.makeText(this,"一共选中${adapter.getSelectedItems().size}项",Toast.LENGTH_SHORT).show()
+        }
+
+        bt_add_data.setOnClickListener {
+            adapter.addData(Item(3, true),3)
+            Toast.makeText(this,"从[3]中插入一条数据",Toast.LENGTH_SHORT).show()
         }
     }
 
