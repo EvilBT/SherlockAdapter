@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
 
-//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 29
@@ -46,11 +46,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
-/*publish {
+publish {
     userOrg = 'sherlock'      //bintray注册的用户名
     groupId = 'cn.sherlockzp'         //compile引用时的第1部分groupId
     artifactId = 'kdbsherlockadapter'     //compile引用时的第2部分项目名
-    publishVersion = '2.0.0'    //compile引用时的第3部分版本号
+    publishVersion = '2.0.1'    //compile引用时的第3部分版本号
     desc = 'This is a kotlin sherlock adapter extend library'
     website = 'https://github.com/EvilBT/SherlockAdapter'
-}*/
+}
