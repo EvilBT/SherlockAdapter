@@ -39,7 +39,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -50,7 +50,7 @@ publish {
     userOrg = 'sherlock'      //bintray注册的用户名
     groupId = 'cn.sherlockzp'         //compile引用时的第1部分groupId
     artifactId = 'kdbsherlockadapter'     //compile引用时的第2部分项目名
-    publishVersion = '2.0.1'    //compile引用时的第3部分版本号
+    publishVersion = '2.0.2'    //compile引用时的第3部分版本号
     desc = 'This is a kotlin sherlock adapter extend library'
     website = 'https://github.com/EvilBT/SherlockAdapter'
 }

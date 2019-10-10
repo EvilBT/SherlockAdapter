@@ -107,7 +107,7 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
     fun setText(@IdRes id: Int, @StringRes strRes: Int) = setText(id, itemView.resources.getString(strRes))
 
     fun setText(@IdRes id: Int, @StringRes strRes: Int,vararg formatArgs: Any)
-        = setText(id, itemView.resources.getString(strRes, formatArgs))
+        = setText(id, itemView.resources.getString(strRes, *formatArgs))
 
     fun setText(@IdRes id: Int, callback: TextCallback) = setView(id, callback)
 
