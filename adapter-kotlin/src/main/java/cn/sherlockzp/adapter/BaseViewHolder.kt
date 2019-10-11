@@ -13,6 +13,8 @@ import android.view.View
 import android.widget.Checkable
 import android.widget.ImageView
 import android.widget.TextView
+import java.text.Format
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -37,13 +39,13 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
 
     private var initLongClickListener = AtomicBoolean(false)
 
-    private val onLongClickListener = View.OnLongClickListener {
+    val onLongClickListener = View.OnLongClickListener {
         return@OnLongClickListener onItemLongClickListener.onItemLongClick(it, adapterPosition)
     }
 
     var onItemCheckedChangeListener: OnItemCheckedChangeListener? = null
 
-    private val onItemCheckedListener = View.OnClickListener {
+    val onItemCheckedListener = View.OnClickListener {
         if (it is Checkable) {
             onItemCheckedChangeListener?.onItemCheck(it, it.isChecked, adapterPosition)
         }
@@ -99,15 +101,17 @@ class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         return this
     }
 
-    fun setText(@IdRes id: Int, text: String?): BaseViewHolder {
-        findText(id)?.text = text
+    fun setText(@IdRes id: Int, text: String?,vararg formatArgs: Any): BaseViewHolder {
+        if (text.isNullOrEmpty() || formatArgs.isEmpty()) {
+            findText(id)?.text = text
+        } else {
+            findText(id)?.text = String.format(Locale.getDefault(),text,*formatArgs)
+        }
         return this
     }
 
-    fun setText(@IdRes id: Int, @StringRes strRes: Int) = setText(id, itemView.resources.getString(strRes))
-
     fun setText(@IdRes id: Int, @StringRes strRes: Int,vararg formatArgs: Any)
-        = setText(id, itemView.resources.getString(strRes, *formatArgs))
+        = setText(id, itemView.resources.getString(strRes), *formatArgs)
 
     fun setText(@IdRes id: Int, callback: TextCallback) = setView(id, callback)
 

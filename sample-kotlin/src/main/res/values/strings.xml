@@ -49,4 +49,6 @@
     <string name="title_activity_auto_load_more">加载更多</string>
     <string name="title_activity_multi_select_item">多选列表</string>
     <string name="title_activity_expandable">多级展开列表</string>
+
+    <string name="format_label">标签：%s%d</string>
 </resources>

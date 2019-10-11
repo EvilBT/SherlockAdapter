@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
 
         override fun convert(holder: BaseViewHolder, data: ResolveInfo, index: Int) {
             holder.setText(R.id.tv_activity_title, data.activityInfo.labelRes)
+                    //.setText(R.id.tv_activity_label,"测试啦%s,%d","NB",index)
+                    .setText(R.id.tv_activity_label,R.string.format_label,"NB",index)
         }
     }
 
